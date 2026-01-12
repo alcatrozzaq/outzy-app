@@ -55,3 +55,62 @@
         padding-bottom: 140px; 
     }
 }
+/* --- FIX MOBILE STICKY BAR (Revisi Final) --- */
+.mobile-booking-bar {
+    display: none; /* Sembunyi di desktop */
+    position: fixed;
+    bottom: 0; /* NEMPEL PALING BAWAH */
+    left: 0;
+    width: 100%;
+    background-color: white;
+    padding: 1rem;
+    box-shadow: 0 -4px 15px rgba(0,0,0,0.1); /* Bayangan lebih halus */
+    z-index: 2000; /* Pastikan di atas segalanya */
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #eee;
+}
+
+.mobile-booking-bar .price-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.mobile-booking-bar .label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+.mobile-booking-bar .price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ff5e1f;
+}
+
+.mobile-booking-bar button {
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+/* TAMPILKAN HANYA DI MOBILE */
+@media (max-width: 768px) {
+    .mobile-booking-bar {
+        display: flex;
+    }
+    
+    /* SEMBUNYIKAN NAVIGASI BAWAH (Menu Home/Akun) agar tidak dobel */
+    .bottom-nav {
+        display: none !important;
+    }
+    
+    /* Tambah padding di body agar konten terakhir tidak tertutup tombol pesan */
+    body {
+        padding-bottom: 90px !important; 
+    }
+}
