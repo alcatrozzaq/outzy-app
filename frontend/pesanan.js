@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // 3. Fetch Data Spesifik Email User
-        const response = await fetch(`https://outzy-api.onrender.com//api/orders?email=${userEmail}`);
+        const response = await fetch(`https://outzy-api.onrender.com/api/orders?email=${userEmail}`);
         
         if (!response.ok) throw new Error('Gagal mengambil data pesanan.');
         
