@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     checkLoginStatus(); // Panggil fungsi cek login
 
     try {
-        const response = await fetch('https://outzy-api.onrender.com//api/locations');
+        const response = await fetch('https://outzy-api.onrender.com/api/locations');
         if (!response.ok) throw new Error('Gagal memuat data lokasi');
         allLocationsData = await response.json();
         displayLocations(allLocationsData);
