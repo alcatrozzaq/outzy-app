@@ -13,6 +13,7 @@ body {
     background-color: var(--background-grey);
     font-family: var(--font-family);
     color: var(--text-dark);
+    margin: 0;
 }
 
 /* --- HERO SECTION (Bagian Atas) --- */
@@ -23,17 +24,17 @@ body {
     position: relative;
     display: flex;
     align-items: flex-end;
-    color: white;
-    /* Default background jika gambar gagal load */
-    background-color: #333; 
+    color: white !important; /* Paksa teks putih */
+    background-color: #333; /* Fallback color */
 }
 
+/* Overlay Gelap agar teks terbaca */
 .detail-hero::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    /* Overlay gradasi agar teks terbaca */
-    background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.8));
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.8));
+    z-index: 1;
 }
 
 .info-header {
@@ -47,16 +48,18 @@ body {
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
+    color: white;
     text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
 .info-header p {
     font-size: 1rem;
-    opacity: 0.9;
+    opacity: 0.95;
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    color: white;
 }
 
 .info-tags {
@@ -71,31 +74,31 @@ body {
     border-radius: 20px;
     font-size: 0.8rem;
     border: 1px solid rgba(255,255,255,0.3);
+    color: white;
 }
 
 /* --- KONTEN UTAMA --- */
 .detail-content {
     padding: 2rem 0;
-    /* Beri jarak bawah agar tidak tertutup sticky bar di HP */
-    padding-bottom: 100px; 
+    padding-bottom: 120px; /* Jarak aman untuk Sticky Bar Mobile */
 }
 
 .container {
     display: grid;
-    grid-template-columns: 2fr 1fr; /* Kiri konten, Kanan sidebar */
+    grid-template-columns: 2fr 1fr;
     gap: 2rem;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1rem;
 }
 
-/* --- TABS & ISI --- */
+/* --- TABS --- */
 .tabs {
     display: flex;
     gap: 1rem;
     border-bottom: 1px solid #e0e0e0;
     margin-bottom: 1.5rem;
-    overflow-x: auto; /* Scroll jika layar kecil */
+    overflow-x: auto;
 }
 
 .tab-link {
@@ -126,19 +129,14 @@ body {
     border-radius: 3px 3px 0 0;
 }
 
-#tab-content-container {
-    line-height: 1.6;
-    color: #444;
-}
-
-/* --- SIDEBAR BOOKING CARD --- */
+/* --- SIDEBAR BOOKING --- */
 .booking-card {
     background-color: var(--card-bg);
     padding: 1.5rem;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     position: sticky;
-    top: 90px; /* Jarak dari header sticky */
+    top: 90px;
     border: 1px solid #eee;
 }
 
@@ -147,7 +145,6 @@ body {
     color: var(--text-dark);
 }
 
-/* Tombol Pilihan Tipe (Tiket/Paket) */
 .choice-buttons {
     display: flex;
     flex-direction: column;
@@ -162,9 +159,10 @@ body {
     text-align: left;
     cursor: pointer;
     transition: all 0.2s;
+    width: 100%;
 }
 
-.choice-btn:hover {
+.choice-btn:hover, .choice-btn.active {
     border-color: var(--primary-blue);
     background-color: #f0f9ff;
 }
@@ -172,7 +170,6 @@ body {
 .choice-title {
     display: block;
     font-weight: 600;
-    font-size: 1rem;
     margin-bottom: 0.2rem;
     color: var(--text-dark);
 }
@@ -183,65 +180,39 @@ body {
     color: var(--text-light);
 }
 
-/* Form Inputs */
-.input-group {
-    margin-bottom: 1rem;
-}
-
-.input-group label {
-    display: block;
-    font-size: 0.9rem;
-    margin-bottom: 0.4rem;
-    font-weight: 500;
-}
-
+/* --- FORM INPUTS --- */
+.input-group { margin-bottom: 1rem; }
+.input-group label { display: block; margin-bottom: 0.4rem; font-weight: 500; font-size: 0.9rem; }
 .input-group input, .input-group select {
     width: 100%;
     padding: 0.7rem;
     border: 1px solid #ddd;
     border-radius: 8px;
     font-family: inherit;
+    box-sizing: border-box; /* Penting agar padding tidak melebarkan elemen */
 }
-
-.input-group.half {
-    display: inline-block;
-    width: 48%;
-}
-
-.booking-inputs {
-    display: flex;
-    justify-content: space-between;
-}
+.input-group.half { display: inline-block; width: 48%; }
+.booking-inputs { display: flex; justify-content: space-between; }
 
 /* Radio Pills (Jam) */
-.radio-pills {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
-
-.radio-pills input[type="radio"] {
-    display: none;
-}
-
+.radio-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.radio-pills input[type="radio"] { display: none; }
 .radio-pills label {
     padding: 0.5rem 1rem;
     border: 1px solid #ddd;
     border-radius: 20px;
     cursor: pointer;
     font-size: 0.9rem;
-    transition: all 0.2s;
     background: white;
     margin: 0;
 }
-
 .radio-pills input[type="radio"]:checked + label {
     background-color: var(--primary-blue);
     color: white;
     border-color: var(--primary-blue);
 }
 
-/* Options (Guide/Addons) */
+/* Opsi Tambahan */
 .booking-options .option-item {
     display: flex;
     justify-content: space-between;
@@ -269,10 +240,7 @@ body {
     font-weight: 700;
     font-size: 1.1rem;
 }
-
-.booking-total span:last-child {
-    color: #FF5E1F;
-}
+.booking-total span:last-child { color: #FF5E1F; }
 
 .btn-book {
     width: 100%;
@@ -285,28 +253,12 @@ body {
     font-size: 1rem;
     margin-top: 1rem;
     cursor: pointer;
-    transition: background 0.2s;
 }
+.btn-book:hover { background-color: #0056b3; }
+.back-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; margin-right: 0.5rem; }
+.panel-header { display: flex; align-items: center; margin-bottom: 1rem; }
 
-.btn-book:hover {
-    background-color: #0056b3;
-}
-
-.back-btn {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-    margin-right: 0.5rem;
-}
-
-.panel-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-/* --- BASECAMP SELECTOR (Main Content) --- */
+/* --- BASECAMP SELECTOR --- */
 .basecamp-selector {
     margin-bottom: 1.5rem;
     padding: 1rem;
@@ -314,12 +266,7 @@ body {
     border-radius: 10px;
     border: 1px solid #c7d2fe;
 }
-.basecamp-buttons {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-    flex-wrap: wrap;
-}
+.basecamp-buttons { display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
 .basecamp-btn {
     padding: 0.5rem 1rem;
     border: 1px solid var(--primary-blue);
@@ -329,26 +276,23 @@ body {
     cursor: pointer;
     font-size: 0.9rem;
 }
-.basecamp-btn.active {
-    background: var(--primary-blue);
-    color: white;
-}
+.basecamp-btn.active { background: var(--primary-blue); color: white; }
 
-/* --- MODAL STYLES (PENTING! JANGAN DIHAPUS) --- */
+/* --- MODAL STYLES (Overlay & Content) --- */
 .modal-overlay {
-    display: none; /* Default Tersembunyi */
+    display: none; /* WAJIB HIDDEN SECARA DEFAULT */
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
     background-color: rgba(0,0,0,0.5);
-    z-index: 3000; /* Lebih tinggi dari sticky bar */
+    z-index: 9999;
     justify-content: center;
     align-items: center;
     padding: 1rem;
 }
 
 .modal-overlay.show {
-    display: flex; /* Muncul saat class 'show' aktif */
+    display: flex !important; /* Munculkan saat JS menambahkan class 'show' */
 }
 
 .modal-content {
@@ -358,96 +302,52 @@ body {
     border-radius: 12px;
     display: flex;
     flex-direction: column;
-    max-height: 80vh; /* Agar bisa discroll di HP */
+    max-height: 80vh;
 }
 
-.modal-header, .modal-footer {
-    padding: 1rem;
-    border-bottom: 1px solid #eee;
-}
+.modal-header, .modal-footer { padding: 1rem; border-bottom: 1px solid #eee; }
 .modal-footer { border-top: 1px solid #eee; border-bottom: none; }
+.modal-body { padding: 1rem; overflow-y: auto; }
+.close-btn { background: none; border: none; font-size: 1.5rem; float: right; cursor: pointer; }
 
-.modal-body {
-    padding: 1rem;
-    overflow-y: auto; /* Scroll konten */
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    float: right;
-    cursor: pointer;
-}
-
-/* Guide Card di Modal */
-.guide-card {
+/* Guide & Addon Card di dalam Modal */
+.guide-card, .addon-card {
     display: flex;
     align-items: center;
-    gap: 1rem;
     padding: 0.8rem;
     border: 1px solid #eee;
     border-radius: 8px;
     margin-bottom: 0.5rem;
 }
-.guide-photo { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+.addon-card { justify-content: space-between; }
+.guide-photo { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 1rem; }
 .guide-info h5 { margin: 0; font-size: 0.95rem; }
 .guide-price { font-weight: 700; color: #FF5E1F; margin-left: auto; }
 .checkbox-container input { width: 18px; height: 18px; }
 
-/* Addon Card di Modal */
-.addon-card {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.8rem;
-    border-bottom: 1px solid #f0f0f0;
-}
-.quantity-selector {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-.quantity-btn {
-    width: 30px; height: 30px;
-    border: 1px solid #ddd;
-    background: #f8f9fa;
-    border-radius: 4px;
-    cursor: pointer;
-}
-.quantity-input {
-    width: 40px; text-align: center; border: none; font-weight: 600;
-}
+/* Quantity Selector (+/-) */
+.quantity-selector { display: flex; align-items: center; gap: 5px; }
+.quantity-btn { width: 30px; height: 30px; border: 1px solid #ddd; background: #f8f9fa; border-radius: 4px; cursor: pointer; }
+.quantity-input { width: 40px; text-align: center; border: none; font-weight: 600; }
 
 /* --- MOBILE RESPONSIVE --- */
 @media (max-width: 768px) {
     .container {
-        grid-template-columns: 1fr; /* Satu kolom di HP */
+        grid-template-columns: 1fr;
         padding: 0;
     }
     
-    .detail-hero { height: 250px; }
+    .detail-hero { height: 220px; }
     .info-header { padding: 1rem; }
     .info-header h1 { font-size: 1.5rem; }
     
-    .detail-content { 
-        padding-top: 1rem;
-        /* Padding bawah besar agar tidak tertutup sticky bar */
-        padding-bottom: 120px; 
-    }
-    
-    .main-content { padding: 0 1rem; }
-    .sidebar-content { padding: 0 1rem; }
-    
-    /* Sembunyikan sidebar booking asli di HP (diganti sticky bar) */
-    /* TAPI kita butuh isinya untuk logika JS, jadi jangan display:none total */
-    /* Kita sembunyikan visualnya saja atau biarkan user scroll ke bawah */
-    /* Untuk sekarang biarkan saja agar user bisa input data detail */
+    .detail-content { padding-top: 1rem; }
+    .main-content, .sidebar-content { padding: 0 1rem; }
 }
 
-/* --- MOBILE STICKY BOOKING BAR (FIXED) --- */
+/* --- MOBILE STICKY BOOKING BAR --- */
 .mobile-booking-bar {
-    display: none; /* Sembunyi di desktop */
+    display: none;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -455,28 +355,15 @@ body {
     background-color: white;
     padding: 1rem;
     box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
-    z-index: 2000;
+    z-index: 5000;
     justify-content: space-between;
     align-items: center;
     border-top: 1px solid #eee;
 }
 
-.mobile-booking-bar .price-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.mobile-booking-bar .label {
-    font-size: 0.8rem;
-    color: var(--text-light);
-}
-
-.mobile-booking-bar .price {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #ff5e1f;
-}
-
+.mobile-booking-bar .price-info { display: flex; flex-direction: column; }
+.mobile-booking-bar .label { font-size: 0.8rem; color: var(--text-light); }
+.mobile-booking-bar .price { font-size: 1.1rem; font-weight: 700; color: #ff5e1f; }
 .mobile-booking-bar button {
     background-color: var(--primary-blue);
     color: white;
@@ -489,14 +376,8 @@ body {
 }
 
 @media (max-width: 768px) {
-    .mobile-booking-bar {
-        display: flex; /* Muncul di HP */
-    }
-    
-    /* Sembunyikan Navigasi Bawah App (Home/Akun) agar tidak dobel */
-    .bottom-nav {
-        display: none !important;
-    }
+    .mobile-booking-bar { display: flex; }
+    .bottom-nav { display: none !important; } /* Sembunyikan Navigasi Bawah App */
 }
 
 .hidden { display: none !important; }
