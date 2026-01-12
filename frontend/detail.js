@@ -31,11 +31,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     // --- FETCH DATA ---
     let allLocationsData = [], allGuidesData = [];
     try {
-        const locationsResponse = await fetch('http://localhost:3000/api/locations');
+        const locationsResponse = await fetch('https://outzy-api.onrender.com//api/locations');
         if (!locationsResponse.ok) throw new Error('Server Error');
         allLocationsData = await locationsResponse.json();
 
-        const guidesResponse = await fetch('http://localhost:3000/api/guides');
+        const guidesResponse = await fetch('https://outzy-api.onrender.com//api/guides');
         if (!guidesResponse.ok) throw new Error('Server Error');
         allGuidesData = await guidesResponse.json();
     } catch (error) {
@@ -419,7 +419,7 @@ window.addEventListener('DOMContentLoaded', async () => {
                 btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
                 btn.disabled = true;
 
-                const response = await fetch('http://localhost:3000/api/orders', {
+                const response = await fetch('https://outzy-api.onrender.com//api/orders', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(orderData)

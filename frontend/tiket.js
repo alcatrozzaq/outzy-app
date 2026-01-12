@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         // 2. Ambil Data dari Backend (Filter by Email dulu)
         // Note: Idealnya ada endpoint /api/orders/:id, tapi untuk MVP kita filter client-side
-        const response = await fetch(`http://localhost:3000/api/orders?email=${userEmail}`);
+        const response = await fetch(`https://outzy-api.onrender.com//api/orders?email=${userEmail}`);
         
         if (!response.ok) throw new Error('Gagal koneksi server');
         
