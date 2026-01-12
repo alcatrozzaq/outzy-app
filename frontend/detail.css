@@ -1,0 +1,57 @@
+/* --- STYLING SPESIFIK UNTUK HALAMAN DETAIL --- */
+.detail-hero{background-image:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.6)),url(aset/merbabu.jpg);background-size:cover;background-position:center;padding:12rem 0 10rem 0;color:#fff}.info-header h1{font-size:3rem;text-shadow:2px 2px 4px rgba(0,0,0,.5);margin-bottom:.5rem}.info-header p{font-size:1.2rem;margin-bottom:1rem}.info-tags span{background-color:rgba(255,255,255,.2);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);padding:.5rem 1rem;border-radius:20px;margin-right:.5rem;font-weight:500;display:inline-block;margin-bottom:.5rem}.info-tags .fa-solid{margin-right:8px}.detail-content .container{display:flex;gap:2rem;padding-top:3rem;align-items:flex-start;padding-bottom:4rem}.main-content{flex:3}.sidebar-content{flex:1;position:sticky;top:100px}.basecamp-selector{margin-bottom:2rem}.basecamp-selector h4{font-size:1.2rem;margin-bottom:1rem}.basecamp-buttons{display:flex;gap:1rem;flex-wrap:wrap}.basecamp-btn{padding:.75rem 1.5rem;border:2px solid #eee;border-radius:8px;background-color:transparent;font-size:1rem;font-weight:600;cursor:pointer;transition:all .2s ease}.basecamp-btn.active,.basecamp-btn:hover{background-color:var(--primary-blue);color:#fff;border-color:var(--primary-blue)}.tabs{border-bottom:2px solid #eee;margin-bottom:2rem;display:flex;flex-wrap:wrap}.tab-link{background-color:transparent;border:none;padding:1rem 0;margin-right:2rem;font-size:1.1rem;font-weight:600;cursor:pointer;color:var(--text-light);position:relative}.tab-link.active{color:var(--primary-blue)}.tab-link.active::after{content:'';position:absolute;bottom:-2px;left:0;width:100%;height:3px;background-color:var(--primary-blue)}#tab-content-container{line-height:1.8}#tab-content-container h3{font-size:1.5rem;margin-bottom:1rem}#tab-content-container ul{list-style-position:inside}.booking-card{background-color:var(--card-bg);padding:1.5rem;border-radius:12px;border:1px solid #e0e0e0}.booking-card h4{font-size:1.2rem}.btn-book{width:100%;padding:1rem;font-size:1rem;font-weight:600;background-color:var(--primary-blue);color:#fff;border:none;border-radius:8px;cursor:pointer;margin-top:1rem}.btn-book:disabled{background-color:#ccc;cursor:not-allowed}.booking-inputs{display:flex;gap:1rem;margin-top:1.5rem}.input-group{display:flex;flex-direction:column;width:100%;margin-bottom:1rem}.input-group.half{width:50%}.input-group label{font-size:.9rem;font-weight:500;margin-bottom:.5rem}.input-group input{padding:.75rem;border:1px solid #ddd;border-radius:8px;font-size:1rem;font-family:var(--font-family)}.booking-card hr{border:none;border-top:1px solid #eee;margin:1.5rem 0}.option-item{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}.option-summary,.option-price{font-weight:600}.btn-pilih{background:none;border:1px solid var(--primary-blue);color:var(--primary-blue);padding:.5rem 1rem;border-radius:6px;font-weight:600;cursor:pointer}.booking-total{display:flex;justify-content:space-between;align-items:center;font-size:1.2rem;font-weight:700}#simple-total-price-display,#total-price-display{color:#ff5e1f;font-size:1.5rem}.checkbox-container{display:block;position:relative;padding-left:35px;cursor:pointer;font-size:1rem;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.checkbox-container input{position:absolute;opacity:0;cursor:pointer}.checkmark{position:absolute;top:0;left:0;height:25px;width:25px;background-color:#eee;border-radius:4px}.checkbox-container:hover input~.checkmark{background-color:#ccc}.checkbox-container input:checked~.checkmark{background-color:var(--primary-blue)}.checkmark:after{content:"";position:absolute;display:none}.checkbox-container input:checked~.checkmark:after{display:block}.checkbox-container .checkmark:after{left:9px;top:5px;width:5px;height:10px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg)}.full-width{margin-top:1.5rem}.radio-pills{display:flex;flex-wrap:wrap;gap:.75rem}.radio-pills label{display:inline-block;padding:.5rem 1rem;border:1px solid #ddd;border-radius:20px;cursor:pointer;transition:all .2s ease}.radio-pills input[type=radio]{display:none}.radio-pills input[type=radio]:checked+label{background-color:var(--primary-blue);color:#fff;border-color:var(--primary-blue)}.validation-message-container{min-height:20px;margin-top:.5rem}#validation-message{font-size:.8rem;color:red;text-align:center}.hidden{display:none!important}.choice-buttons{display:flex;flex-direction:column;gap:1rem;margin-top:1.5rem}.choice-btn{width:100%;padding:1rem;border:2px solid #eee;border-radius:8px;background-color:transparent;text-align:left;cursor:pointer;transition:all .2s ease}.choice-btn:hover{border-color:var(--primary-blue);background-color:#f8faff}.choice-title{display:block;font-size:1.1rem;font-weight:600;margin-bottom:.25rem}.choice-subtitle{display:block;font-size:.9rem;color:var(--text-light)}.panel-header{display:flex;align-items:center;margin-bottom:1.5rem;gap:1rem}.back-btn{background:none;border:none;font-size:1.5rem;cursor:pointer;padding:0}.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,.5);z-index:2000;display:none;justify-content:center;align-items:center;opacity:0;transition:opacity .3s ease}.modal-overlay.show{display:flex;opacity:1}.modal-content{background-color:#fff;padding:2rem;border-radius:12px;width:90%;max-width:600px;max-height:80vh;display:flex;flex-direction:column}.modal-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee;padding-bottom:1rem;margin-bottom:1rem}.modal-header h3{font-size:1.5rem}.close-btn{font-size:2rem;border:none;background:none;cursor:pointer;color:var(--text-light)}.modal-body{overflow-y:auto;flex-grow:1}.modal-footer{border-top:1px solid #eee;padding-top:1rem;margin-top:1rem;text-align:right}.guide-card,.addon-card{display:flex;align-items:center;gap:1rem;padding:1rem;border:1px solid #eee;border-radius:8px;margin-bottom:1rem}.guide-photo{width:60px;height:60px;border-radius:50%;object-fit:cover}.guide-info,.addon-info{flex-grow:1}.guide-info h5,.addon-info h5{font-size:1.1rem;margin-bottom:.25rem}.guide-skills{display:flex;gap:.5rem;margin-top:.5rem}.guide-skills span{font-size:.8rem;background-color:#eee;padding:.25rem .5rem;border-radius:4px}.guide-price,.addon-price{font-weight:700;font-size:1.1rem;text-align:right}.quantity-selector{display:flex;align-items:center;gap:.5rem}.quantity-selector button{width:30px;height:30px;border:1px solid #ddd;background-color:#f9f9f9;font-size:1.2rem;cursor:pointer}.quantity-selector input{width:40px;text-align:center;border:1px solid #ddd;padding:.5rem;border-radius:4px;-moz-appearance:textfield}@media (max-width:768px){.detail-hero{padding:10rem 0 6rem 0}.info-header h1{font-size:2.2rem}.detail-content .container{flex-direction:column}.sidebar-content{position:static;width:100%}}
+/* Buka frontend/detail.css, tambahkan di paling bawah */
+
+/* --- MOBILE STICKY BOOKING BAR --- */
+.mobile-booking-bar {
+    display: none; /* Sembunyikan di desktop */
+    position: fixed;
+    bottom: 60px; /* Di atas bottom nav (tinggi nav ~60px) */
+    left: 0;
+    width: 100%;
+    background-color: white;
+    padding: 1rem;
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+    z-index: 900;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #eee;
+}
+
+.mobile-booking-bar .price-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.mobile-booking-bar .label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+.mobile-booking-bar .price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ff5e1f;
+}
+
+.mobile-booking-bar button {
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+/* TAMPILKAN HANYA DI MOBILE */
+@media (max-width: 768px) {
+    .mobile-booking-bar {
+        display: flex;
+    }
+    
+    /* Beri jarak extra di konten agar tidak tertutup bar */
+    .detail-content {
+        padding-bottom: 140px; 
+    }
+}

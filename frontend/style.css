@@ -1,0 +1,264 @@
+:root {
+    --primary-blue: #006CEB;
+    --secondary-blue: #00B9FF;
+    --background-grey: #F2F3F4;
+    --text-dark: #333333;
+    --text-light: #666666;
+    --card-bg: #FFFFFF;
+    --font-family: 'Poppins', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--background-grey);
+    color: var(--text-dark);
+    padding-bottom: 80px;
+}
+
+.container {
+    width: 100%;
+    padding: 0 1rem;
+    margin: 0 auto;
+}
+
+/* --- MOBILE FIRST STYLES --- */
+.desktop-header { display: none; }
+.hero-content { display: none; } /* Sembunyikan hero desktop di mobile */
+
+.mobile-header {
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 1rem 0;
+}
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0 1rem;
+    margin: 0 auto;
+}
+.top-bar h4 { font-size: 1.1rem; font-weight: 500; }
+.top-bar-icons { display: flex; gap: 1.5rem; font-size: 1.3rem; }
+
+.search-section {
+    background-color: var(--primary-blue);
+    padding: 0 1rem 1.5rem 1rem;
+}
+.search-wrapper { position: relative; }
+.search-wrapper .fa-magnifying-glass { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-light); }
+.search-wrapper input { width: 100%; padding: 0.8rem 1rem 0.8rem 40px; border: none; border-radius: 8px; font-size: 1rem; font-family: var(--font-family); }
+
+.main-categories { margin-top: 1.5rem; }
+
+/* REVISI GRID KATEGORI AGAR SCROLLABLE DI MOBILE */
+.category-grid {
+    display: flex; /* Ganti dari grid ke flex untuk scroll */
+    gap: 1rem;
+    background-color: var(--card-bg);
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    
+    /* Aktifkan Scroll Samping */
+    overflow-x: auto;
+    white-space: nowrap;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+/* Sembunyikan scrollbar agar rapi */
+.category-grid::-webkit-scrollbar {
+    display: none;
+}
+
+.category-grid-item { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 0.5rem; 
+    text-align: center; 
+    font-size: 0.8rem; 
+    font-weight: 500; 
+    cursor: pointer;
+    
+    /* Agar item tidak mengecil di flex */
+    flex: 0 0 auto; 
+    width: 70px;
+}
+.icon-wrapper { background-color: var(--background-grey); width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
+.icon-wrapper img { height: 24px; width: auto; }
+
+.results { padding: 2rem 0; overflow: hidden; }
+.results h2 { font-size: 1.5rem; margin-bottom: 1rem; padding: 0 1rem; }
+.results-container { display: flex; overflow-x: auto; gap: 1rem; padding: 0 1rem 1rem 1rem; -ms-overflow-style: none; scrollbar-width: none; }
+.results-container::-webkit-scrollbar { display: none; }
+
+.location-card-link { text-decoration: none; color: inherit; flex-shrink: 0; width: 240px; }
+.location-card{background-color:var(--card-bg);border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden;transition:transform .2s ease,box-shadow .2s ease;cursor:pointer;border:1px solid #e0e0e0;height:100%}.location-card:hover{transform:translateY(-5px);box-shadow:0 8px 16px rgba(0,0,0,.1)}.card-image{width:100%;height:140px;object-fit:cover}.card-content{padding:1rem}.card-title{font-size:1rem;font-weight:600;margin-bottom:.25rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.card-location{font-size:.8rem;color:var(--text-light);margin-bottom:1rem}.card-info{display:flex;justify-content:space-between;align-items:center}.card-rating{font-weight:600; font-size: 0.9rem;}.card-rating i{color:#ffc700}.card-price{font-size:1rem;font-weight:700;color:#ff5e1f}
+
+.bottom-nav { display: flex; justify-content: space-around; position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--card-bg); box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 1000; padding: 0.5rem 0; }
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; text-decoration: none; color: var(--text-light); font-size: 0.75rem; font-weight: 500; }
+.nav-item i { font-size: 1.5rem; }
+.nav-item.active { color: var(--primary-blue); }
+
+/* --- DESKTOP STYLES (Layar Lebar) --- */
+@media (min-width: 768px) {
+    body { padding-bottom: 0; }
+    .mobile-header, .bottom-nav, .search-section { display: none; }
+    .hero-content { display: flex; } /* Tampilkan kembali hero desktop */
+
+    .container { max-width: 1280px; width: 90%; padding: 0; }
+
+    .desktop-header { display: block; position: absolute; top: 0; left: 0; width: 100%; z-index: 1000; background-color: transparent; padding: 1rem 0; transition: background-color 0.3s ease, box-shadow 0.3s ease; }
+    .desktop-header .container{display:flex;justify-content:space-between;align-items:center}.logo{font-size:1.8rem;font-weight:700;color:#fff;text-decoration:none}.desktop-nav{display:flex;align-items:center}.desktop-nav a{text-decoration:none;color:#fff;font-weight:500;margin-left:1.5rem;transition:color .3s ease}.btn-primary{background-color:var(--primary-blue);color:#fff;padding:.6rem 1.2rem;border-radius:8px;border:1px solid var(--primary-blue)}.btn-secondary{border:1px solid #fff;color:#fff;padding:.6rem 1.2rem;border-radius:8px;transition:color .3s ease,border-color .3s ease}.desktop-header.sticky{position:fixed;background-color:var(--card-bg);box-shadow:0 4px 6px rgba(0,0,0,.05)}.desktop-header.sticky .logo{color:var(--primary-blue)}.desktop-header.sticky .desktop-nav a{color:var(--text-dark)}.desktop-header.sticky .btn-secondary{color:var(--primary-blue);border-color:var(--primary-blue)}.dropdown{position:relative;display:inline-block}.dropdown-btn .fa-chevron-down{font-size:.8em;margin-left:8px;transition:transform .3s ease}.dropdown:hover .dropdown-btn .fa-chevron-down{transform:rotate(180deg)}.dropdown-content{visibility:hidden;opacity:0;transform:translateY(-10px);position:absolute;background-color:var(--card-bg);min-width:200px;box-shadow:0 8px 16px 0 rgba(0,0,0,.1);z-index:1;border-radius:8px;margin-top:10px;right:0;overflow:hidden;transition:opacity .3s ease,transform .3s ease,visibility .3s}.dropdown-content a{color:var(--text-dark);padding:12px 16px;text-decoration:none;display:block;margin:0;text-align:left}.dropdown-content a:hover{background-color:#f1f1f1}.dropdown:hover .dropdown-content{visibility:visible;opacity:1;transform:translateY(0)}
+
+    .hero-content {
+        height: 70vh;
+        background-image: linear-gradient(rgba(0,0,0,.4),rgba(0,0,0,.4)),url(aset/hero-background.jpg);
+        background-position: center; background-repeat: no-repeat; background-size: cover; background-attachment: fixed;
+        color: #fff;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .hero-content::before { content: "Jelajahi Dunia, Temukan Dirimu"; font-size: 3.5rem; font-weight: 700; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+
+    .main-categories { margin-top: -5rem; position: relative; z-index: 10; }
+    
+    /* Grid Desktop tetap Grid */
+    .category-grid { 
+        display: grid;
+        grid-template-columns: repeat(5, 1fr); 
+        overflow-x: visible; /* Matikan scroll di desktop */
+        white-space: normal;
+        gap: 1rem;
+    }
+    .category-grid-item {
+        width: auto; /* Reset lebar di desktop */
+    }
+    
+    .results {
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+    }
+    .results h2 {
+        padding: 0;
+        max-width: 1280px;
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .results-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.5rem;
+        padding: 0;
+        overflow-x: hidden;
+        max-width: 1280px;
+        width: 90%;
+        margin: 0 auto;
+    }
+    .location-card-link {
+        width: auto;
+    }
+}
+
+/* --- STYLING NAVIGASI AKUN DESKTOP --- */
+.desktop-account-nav {
+    display: flex;
+    align-items: center;
+    margin-left: 1.5rem;
+}
+
+#nav-logged-out {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+#nav-logged-in {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    font-weight: 600;
+    color: var(--text-dark); /* Warna saat header sticky */
+    transition: color 0.3s ease-in-out;
+}
+
+header:not(.sticky) #nav-logged-in {
+    color: white; /* Warna saat header transparan */
+}
+
+.nav-profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary-blue);
+}
+
+header:not(.sticky) .nav-profile-pic {
+    border-color: white;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* --- MOBILE STICKY BOOKING BAR (BARU) --- */
+.mobile-booking-bar {
+    display: none; /* Default sembunyi */
+    position: fixed;
+    bottom: 60px; /* Di atas bottom nav (tinggi nav ~60px) */
+    left: 0;
+    width: 100%;
+    background-color: white;
+    padding: 1rem;
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+    z-index: 900;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #eee;
+}
+
+.mobile-booking-bar .price-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.mobile-booking-bar .label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+.mobile-booking-bar .price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ff5e1f;
+}
+
+.mobile-booking-bar button {
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+/* TAMPILKAN HANYA DI MOBILE */
+@media (max-width: 768px) {
+    .mobile-booking-bar {
+        display: flex;
+    }
+    
+    /* Beri jarak extra di konten agar tidak tertutup bar */
+    .detail-content {
+        padding-bottom: 140px; 
+    }
+}

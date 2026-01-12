@@ -1,0 +1,146 @@
+/* Styling Khusus Halaman Tiket */
+body {
+    background-color: #f0f2f5;
+}
+
+.ticket-container {
+    padding: 1.5rem;
+    max-width: 480px; /* Ukuran lebar HP */
+    margin: 0 auto;
+}
+
+.ticket-card {
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+/* Efek "Sobekan" Tiket (Hiasan) */
+.ticket-card::before, .ticket-card::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: #f0f2f5; /* Warna sama dengan background body */
+    border-radius: 50%;
+    top: 58%; /* Posisi di tengah garis putus-putus */
+}
+.ticket-card::before { left: -10px; }
+.ticket-card::after { right: -10px; }
+
+.ticket-header {
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.ticket-status {
+    background-color: white;
+    color: var(--primary-blue);
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+.order-id {
+    font-size: 0.8rem;
+    opacity: 0.9;
+}
+
+.qr-section {
+    padding: 2rem;
+    text-align: center;
+}
+
+.qr-code {
+    width: 140px;
+    height: 140px;
+    margin-bottom: 1rem;
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.qr-section p {
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.dashed-line {
+    border: none;
+    border-top: 2px dashed #ddd;
+    margin: 0 1.5rem;
+}
+
+.ticket-details {
+    padding: 1.5rem;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.detail-row .label {
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.detail-row .value {
+    font-weight: 600;
+    color: var(--text-dark);
+    text-align: right;
+    max-width: 60%;
+}
+
+.ticket-total {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f9faff;
+}
+
+.total-price {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #FF5E1F;
+}
+
+.ticket-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.btn-download {
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.btn-help {
+    width: 100%;
+    padding: 1rem;
+    background-color: white;
+    color: #25D366; /* Warna WA */
+    border: 2px solid #25D366;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+}

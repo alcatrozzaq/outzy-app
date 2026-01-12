@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outzy - Temukan Petualanganmu</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="aset/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="aset/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="aset/icons/favicon-16x16.png">
+    <link rel="manifest" href="aset/icons/site.webmanifest">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+</head>
+<body>
+
+    <header class="desktop-header">
+        <div class="container">
+            <a href="index.html" class="logo">Outzy</a>
+            <nav class="desktop-nav">
+                <a href="#">Promo</a>
+                <a href="#">Jadi Mitra</a>
+                <a href="pesanan.html">Pesanan Saya</a>
+                <a href="#">Bantuan</a>
+                <div class="dropdown">
+                    <a href="#" class="dropdown-btn">Lainnya <i class="fa-solid fa-chevron-down"></i></a>
+                    <div class="dropdown-content">
+                        <a href="#">Blog Petualangan</a>
+                        <a href="#">Asuransi Perjalanan</a>
+                    </div>
+                </div>
+
+                <div id="nav-logged-out">
+                    <a href="login.html" class="btn-secondary">Daftar</a>
+                    <a href="login.html" class="btn-primary">Masuk</a>
+                </div>
+                <a href="akun.html" id="nav-logged-in" class="header-profile-container hidden">
+                    <img src="aset/user-profiles/default.jpg" alt="Profil" id="header-profile-pic" class="nav-profile-pic">
+                </a>
+                </nav>
+        </div>
+    </header>
+
+    <header class="mobile-header">
+        <div class="top-bar">
+            <h4>Selamat Datang di Outzy!</h4>
+            <div class="top-bar-icons">
+                <i class="fa-solid fa-bell"></i>
+                <i class="fa-solid fa-user-circle"></i>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="search-section">
+            <div class="container">
+                <div class="search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Cari gunung, pantai, atau air terjun...">
+                </div>
+            </div>
+        </section>
+
+        <section class="hero-content">
+        </section>
+
+        <section class="main-categories">
+            <div class="container">
+                <div class="category-grid">
+                    <div class="category-grid-item" data-category="Hiking"><div class="icon-wrapper"><img src="aset/image-filter-activity/hiking-icon.png" alt="Hiking"></div><span>Hiking</span></div>
+                    <div class="category-grid-item" data-category="Diving"><div class="icon-wrapper"><img src="aset/image-filter-activity/diving-icon.png" alt="Diving"></div><span>Diving</span></div>
+                    <div class="category-grid-item" data-category="Surfing"><div class="icon-wrapper"><img src="aset/image-filter-activity/surfing-icon.png" alt="Surfing"></div><span>Surfing</span></div>
+                    <div class="category-grid-item" data-category="Camping"><div class="icon-wrapper"><img src="aset/image-filter-activity/camping-icon.png" alt="Camping"></div><span>Camping</span></div>
+                     <div class="category-grid-item" data-category="All"><div class="icon-wrapper"><img src="aset/image-filter-activity/semua-icon.png" alt="Semua"></div><span>Lainnya</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="results">
+            <div class="container">
+                <h2 id="results-title">Populer Minggu Ini</h2>
+            </div>
+            <div class="results-container">
+                </div>
+        </section>
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item active"><i class="fa-solid fa-home"></i><span>Beranda</span></a>
+        <a href="pesanan.html" class="nav-item"><i class="fa-solid fa-ticket"></i><span>Pesanan Saya</span></a>
+        <a href="#" class="nav-item"><i class="fa-solid fa-percent"></i><span>Promo</span></a>
+        <a href="login.html" class="nav-item"><i class="fa-solid fa-user"></i><span>Akun</span></a>
+    </nav>
+    
+    <script src="auth.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

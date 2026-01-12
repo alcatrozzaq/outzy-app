@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Tiket - Outzy</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="tiket.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+</head>
+<body>
+
+    <header class="mobile-header" style="position: sticky; top: 0; z-index: 100;">
+        <div class="top-bar">
+            <a href="pesanan.html" style="color: white; font-size: 1.2rem;"><i class="fa-solid fa-arrow-left"></i></a>
+            <h4>E-Tiket</h4>
+            <div></div> </div>
+    </header>
+
+    <main class="ticket-container">
+        <div id="ticket-loading" style="text-align: center; padding: 2rem;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Memuat Tiket...
+        </div>
+
+        <div id="ticket-content" class="hidden">
+            
+            <div class="ticket-card">
+                <div class="ticket-header">
+                    <span id="t-status" class="ticket-status">AKAN DATANG</span>
+                    <p class="order-id">Order ID: <span id="t-id">...</span></p>
+                </div>
+
+                <div class="qr-section">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=OUTZY-TICKET" alt="QR Code" class="qr-code">
+                    <p>Tunjukkan QR ini kepada petugas di lokasi</p>
+                </div>
+
+                <hr class="dashed-line">
+
+                <div class="ticket-details">
+                    <div class="detail-row">
+                        <span class="label">Lokasi</span>
+                        <span class="value" id="t-location">...</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Tanggal</span>
+                        <span class="value" id="t-date">...</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="label">Pemesan</span>
+                        <span class="value" id="t-name">...</span>
+                    </div>
+                </div>
+
+                <hr class="dashed-line">
+
+                <div class="ticket-total">
+                    <span>Total Bayar</span>
+                    <span class="total-price" id="t-price">Rp 0</span>
+                </div>
+            </div>
+
+            <div class="ticket-actions">
+                <button class="btn-download" onclick="alert('Tiket berhasil disimpan ke Galeri!')">
+                    <i class="fa-solid fa-download"></i> Simpan Gambar
+                </button>
+                <button class="btn-help" onclick="window.location.href='https://wa.me/'">
+                    <i class="fa-brands fa-whatsapp"></i> Hubungi Basecamp
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="auth.js"></script>
+    <script src="tiket.js"></script>
+</body>
+</html>

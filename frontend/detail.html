@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Lokasi - Outzy</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="detail.css">
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="aset/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="aset/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="aset/icons/favicon-16x16.png">
+    <link rel="manifest" href="aset/icons/site.webmanifest">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+</head>
+<body>
+    <header class="desktop-header">
+        <div class="container">
+            <a href="index.html" class="logo">Outzy</a>
+            <nav class="desktop-nav">
+                <a href="#">Promo</a>
+                <a href="#">Jadi Mitra</a>
+                <a href="pesanan.html">Pesanan Saya</a>
+                <a href="#">Bantuan</a>
+                <div class="dropdown">
+                    <a href="#" class="dropdown-btn">Lainnya <i class="fa-solid fa-chevron-down"></i></a>
+                    <div class="dropdown-content">
+                        <a href="#">Blog Petualangan</a>
+                        <a href="#">Asuransi Perjalanan</a>
+                    </div>
+                </div>
+                <div id="nav-logged-out">
+                    <a href="login.html" class="btn-secondary">Daftar</a>
+                    <a href="login.html" class="btn-primary">Masuk</a>
+                </div>
+                <a href="akun.html" id="nav-logged-in" class="header-profile-container hidden">
+                    <img src="aset/user-profiles/default.jpg" alt="Profil" id="header-profile-pic" class="nav-profile-pic">
+                </a>
+            </nav>
+        </div>
+    </header>
+    
+    <header class="mobile-header">
+         <div class="top-bar">
+            <a href="index.html" style="color: white;"><i class="fa-solid fa-arrow-left"></i></a>
+            <h4>Detail Lokasi</h4>
+            <div></div> 
+        </div>
+    </header>
+
+    <main>
+        <section class="detail-hero">
+            <div class="container"><div class="info-header"><h1></h1><p></p><div class="info-tags"><span><i class="fa-solid fa-circle-check"></i> BUKA</span><span><i class="fa-solid fa-tag"></i> Ramah Pemula</span></div></div></div>
+        </section>
+
+        <section class="detail-content">
+            <div class="container">
+                <div class="main-content">
+                    <div class="basecamp-selector"><h4>Pilih Jalur Pendakian:</h4><div class="basecamp-buttons"></div></div>
+                    <div class="tabs">
+                        <button class="tab-link active" data-tab="deskripsi">Deskripsi</button>
+                        <button class="tab-link" data-tab="infoJalur">Info Jalur</button>
+                        <button class="tab-link" data-tab="fasilitas">Fasilitas</button>
+                        <button class="tab-link" data-tab="ulasan">Ulasan</button>
+                    </div>
+                    <div id="tab-content-container"></div>
+                </div>
+                
+                <div class="sidebar-content">
+                    
+                    <div class="booking-card" style="margin-bottom: 1.5rem; background: #f0f9ff; border-color: #bae6fd;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <i class="fa-solid fa-map-location-dot" style="font-size: 1.5rem; color: #0284c7;"></i>
+                            <h4 style="margin:0; color: #0369a1;">Peta Jalur Offline</h4>
+                        </div>
+                        <p style="font-size: 0.9rem; color: #0c4a6e; margin-bottom: 1rem;">
+                            Unduh peta jalur GPS untuk keamanan maksimal tanpa sinyal internet.
+                        </p>
+                        <button id="download-map-btn" class="btn-book" style="background-color: #0284c7; margin-top: 0;">
+                            <i class="fa-solid fa-download"></i> Unduh Peta
+                        </button>
+                    </div>
+
+                    <div class="booking-card">
+                        
+                        <div id="basecamp-selection-panel" class="hidden">
+                            <h4>Pilih Jalur Pendakian</h4>
+                            <div class="input-group" style="margin-top: 0.5rem;">
+                                <select id="basecamp-select" style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid #ddd; font-size: 1rem; cursor: pointer; background-color: white;">
+                                    <option value="" disabled selected>-- Pilih Jalur --</option>
+                                    </select>
+                            </div>
+                            <hr>
+                        </div>
+
+                        <div id="booking-choice-panel">
+                            <h4>Pilih Tipe Pemesanan</h4>
+                            
+                            <p id="select-route-msg" class="hidden" style="color: #666; font-size: 0.9rem; margin-top: 0.5rem; background-color: #f9f9f9; padding: 10px; border-radius: 6px; border: 1px dashed #ccc;">
+                                <i class="fa-solid fa-circle-info" style="color: var(--primary-blue);"></i> Mohon pilih jalur pendakian di atas atau di sebelah kiri untuk melihat opsi tiket.
+                            </p>
+
+                            <div id="booking-types-container" class="choice-buttons hidden">
+                                <button class="choice-btn" id="choice-tiket-saja"><span class="choice-title">🎟️ Tiket Masuk Saja</span><span class="choice-subtitle">Untuk pendakian 1 hari (Tektok)</span></button>
+                                <button class="choice-btn" id="choice-paket-lengkap"><span class="choice-title">🎒 Paket Pendakian Lengkap</span><span class="choice-subtitle">Termasuk pemandu & sewa alat</span></button>
+                            </div>
+                        </div>
+
+                        <div id="simple-booking-panel" class="hidden">
+                            <div class="panel-header"><button class="back-btn">←</button><h4>Tiket Masuk Saja</h4></div>
+                            <div class="input-group full-width"><label for="simple-date">Tanggal Pendakian</label><input type="date" id="simple-date"></div>
+                            <div class="input-group full-width"><label for="simple-pax-count">Jumlah Orang</label><input type="number" id="simple-pax-count" value="1" min="1"></div>
+                            <div id="simple-climb-time-section" class="input-group full-width"><label>Pilih Waktu Keberangkatan</label><div id="simple-climb-time-options" class="radio-pills"></div></div>
+                            <hr>
+                            <div class="booking-total"><span>Total Harga:</span><span id="simple-total-price-display">Rp 0</span></div>
+                            <button class="btn-book" id="book-ticket-btn">Pesan Tiket</button>
+                        </div>
+
+                        <div id="advanced-booking-panel" class="hidden">
+                             <div class="panel-header"><button class="back-btn">←</button><h4>Paket Pendakian Lengkap</h4></div>
+                            <div class="booking-inputs">
+                                <div class="input-group half"><label for="start-date">Tanggal Mulai</label><input type="date" id="start-date"></div>
+                                <div class="input-group half"><label for="end-date">Tanggal Selesai</label><input type="date" id="end-date"></div>
+                            </div>
+                            <div class="input-group full-width"><label for="pax-count">Jumlah Orang</label><input type="number" id="pax-count" value="1" min="1"></div>
+                            <div id="climb-time-section" class="input-group full-width"><label>Pilih Waktu Keberangkatan</label><div id="climb-time-options" class="radio-pills"></div></div>
+                            <hr>
+                            <div class="booking-options">
+                                <div class="option-item"><span class="option-label">Tambah Pemandu</span><button id="open-guide-modal" class="btn-pilih">Pilih</button></div>
+                                <div class="option-item"><span class="option-label">Sewa Peralatan</span><button id="open-addons-modal" class="btn-pilih">Pilih</button></div>
+                            </div>
+                            <hr>
+                            <div class="booking-total"><span>Total Harga:</span><span id="total-price-display">Rp 0</span></div>
+                            <div class="validation-message-container"><p id="validation-message"></p></div>
+                            <button class="btn-book" id="book-now-btn">Pesan Sekarang</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="guide-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Pilih Pemandu</h3><button id="close-guide-modal" class="close-btn">&times;</button></div>
+            <div class="modal-body" id="guide-list-container"></div>
+            <div class="modal-footer"><button id="confirm-guide-btn" class="btn-book">Konfirmasi Pilihan</button></div>
+        </div>
+    </div>
+    
+    <div id="addons-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header"><h3>Sewa Peralatan</h3><button id="close-addons-modal" class="close-btn">&times;</button></div>
+            <div class="modal-body" id="addons-list-container"></div>
+            <div class="modal-footer"><button id="confirm-addons-btn" class="btn-book">Konfirmasi Pilihan</button></div>
+        </div>
+    </div>
+    
+    <script src="auth.js"></script>
+    <script src="detail.js"></script>
+</body>
+<div class="mobile-booking-bar">
+        <div class="price-info">
+            <span class="label">Mulai dari</span>
+            <span class="price" id="mobile-price-display">Rp 0</span>
+        </div>
+        <button id="mobile-book-btn">Pesan Sekarang</button>
+    </div>
+</html>

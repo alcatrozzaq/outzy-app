@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akun Saya - Outzy</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="akun.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="aset/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="aset/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="aset/icons/favicon-16x16.png">
+    <link rel="manifest" href="aset/icons/site.webmanifest">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+</head>
+<body>
+
+    <header class="desktop-header sticky">
+        <div class="container">
+            <a href="index.html" class="logo">Outzy</a>
+            <nav class="desktop-nav">
+                <a href="#">Promo</a>
+                <a href="#">Jadi Mitra</a>
+                <a href="pesanan.html">Pesanan Saya</a>
+                <a href="#">Bantuan</a>
+                <div class="dropdown">
+                    <a href="#" class="dropdown-btn">Lainnya <i class="fa-solid fa-chevron-down"></i></a>
+                    <div class="dropdown-content">
+                        <a href="#">Blog Petualangan</a>
+                        <a href="#">Asuransi Perjalanan</a>
+                    </div>
+                </div>
+
+                <div id="nav-logged-out">
+                    <a href="login.html" class="btn-secondary">Daftar</a>
+                    <a href="login.html" class="btn-primary">Masuk</a>
+                </div>
+                <a href="akun.html" id="nav-logged-in" class="header-profile-container hidden">
+                    <img src="aset/user-profiles/default.jpg" alt="Profil" id="header-profile-pic" class="nav-profile-pic">
+                </a>
+                </nav>
+        </div>
+    </header>
+
+    <header class="mobile-header">
+        <div class="top-bar">
+            <h4>Akun Saya</h4>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="account-header">
+                <div class="avatar-circle"></div> <div class="user-info">
+                    <h2 class="user-name"></h2> <span class="user-status"><i class="fa-solid fa-star"></i> Premium Member</span>
+                </div>
+            </div>
+            <div class="account-menu">
+                <a href="pesanan.html" class="menu-item"><i class="fa-solid fa-receipt"></i><span>Riwayat Transaksi</span><i class="fa-solid fa-chevron-right"></i></a>
+                <a href="#" class="menu-item"><i class="fa-solid fa-gem"></i><span>Member Benefit</span><i class="fa-solid fa-chevron-right"></i></a>
+                <a href="#" class="menu-item"><i class="fa-solid fa-user-group"></i><span>Daftar Teman Pendaki</span><i class="fa-solid fa-chevron-right"></i></a>
+                <a href="#" class="menu-item"><i class="fa-solid fa-credit-card"></i><span>Metode Pembayaran</span><i class="fa-solid fa-chevron-right"></i></a>
+                 <a href="#" class="menu-item"><i class="fa-solid fa-question-circle"></i><span>Pusat Bantuan</span><i class="fa-solid fa-chevron-right"></i></a>
+                <a href="#" id="logout-button" class="menu-item menu-item-logout"><i class="fa-solid fa-right-from-bracket"></i><span>Keluar</span><i class="fa-solid fa-chevron-right"></i></a>
+            </div>
+        </div>
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item"><i class="fa-solid fa-home"></i><span>Beranda</span></a>
+        <a href="pesanan.html" class="nav-item"><i class="fa-solid fa-ticket"></i><span>Pesanan Saya</span></a>
+        <a href="#" class="nav-item"><i class="fa-solid fa-percent"></i><span>Promo</span></a>
+        <a href="akun.html" class="nav-item active"><i class="fa-solid fa-user"></i><span>Akun</span></a>
+    </nav>
+    
+    <script src="auth.js"></script>
+    <script src="akun.js"></script>
+</body>
+</html>
