@@ -1,116 +1,474 @@
-/* --- STYLING SPESIFIK UNTUK HALAMAN DETAIL --- */
-.detail-hero{background-image:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.6)),url(aset/merbabu.jpg);background-size:cover;background-position:center;padding:12rem 0 10rem 0;color:#fff}.info-header h1{font-size:3rem;text-shadow:2px 2px 4px rgba(0,0,0,.5);margin-bottom:.5rem}.info-header p{font-size:1.2rem;margin-bottom:1rem}.info-tags span{background-color:rgba(255,255,255,.2);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);padding:.5rem 1rem;border-radius:20px;margin-right:.5rem;font-weight:500;display:inline-block;margin-bottom:.5rem}.info-tags .fa-solid{margin-right:8px}.detail-content .container{display:flex;gap:2rem;padding-top:3rem;align-items:flex-start;padding-bottom:4rem}.main-content{flex:3}.sidebar-content{flex:1;position:sticky;top:100px}.basecamp-selector{margin-bottom:2rem}.basecamp-selector h4{font-size:1.2rem;margin-bottom:1rem}.basecamp-buttons{display:flex;gap:1rem;flex-wrap:wrap}.basecamp-btn{padding:.75rem 1.5rem;border:2px solid #eee;border-radius:8px;background-color:transparent;font-size:1rem;font-weight:600;cursor:pointer;transition:all .2s ease}.basecamp-btn.active,.basecamp-btn:hover{background-color:var(--primary-blue);color:#fff;border-color:var(--primary-blue)}.tabs{border-bottom:2px solid #eee;margin-bottom:2rem;display:flex;flex-wrap:wrap}.tab-link{background-color:transparent;border:none;padding:1rem 0;margin-right:2rem;font-size:1.1rem;font-weight:600;cursor:pointer;color:var(--text-light);position:relative}.tab-link.active{color:var(--primary-blue)}.tab-link.active::after{content:'';position:absolute;bottom:-2px;left:0;width:100%;height:3px;background-color:var(--primary-blue)}#tab-content-container{line-height:1.8}#tab-content-container h3{font-size:1.5rem;margin-bottom:1rem}#tab-content-container ul{list-style-position:inside}.booking-card{background-color:var(--card-bg);padding:1.5rem;border-radius:12px;border:1px solid #e0e0e0}.booking-card h4{font-size:1.2rem}.btn-book{width:100%;padding:1rem;font-size:1rem;font-weight:600;background-color:var(--primary-blue);color:#fff;border:none;border-radius:8px;cursor:pointer;margin-top:1rem}.btn-book:disabled{background-color:#ccc;cursor:not-allowed}.booking-inputs{display:flex;gap:1rem;margin-top:1.5rem}.input-group{display:flex;flex-direction:column;width:100%;margin-bottom:1rem}.input-group.half{width:50%}.input-group label{font-size:.9rem;font-weight:500;margin-bottom:.5rem}.input-group input{padding:.75rem;border:1px solid #ddd;border-radius:8px;font-size:1rem;font-family:var(--font-family)}.booking-card hr{border:none;border-top:1px solid #eee;margin:1.5rem 0}.option-item{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}.option-summary,.option-price{font-weight:600}.btn-pilih{background:none;border:1px solid var(--primary-blue);color:var(--primary-blue);padding:.5rem 1rem;border-radius:6px;font-weight:600;cursor:pointer}.booking-total{display:flex;justify-content:space-between;align-items:center;font-size:1.2rem;font-weight:700}#simple-total-price-display,#total-price-display{color:#ff5e1f;font-size:1.5rem}.checkbox-container{display:block;position:relative;padding-left:35px;cursor:pointer;font-size:1rem;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.checkbox-container input{position:absolute;opacity:0;cursor:pointer}.checkmark{position:absolute;top:0;left:0;height:25px;width:25px;background-color:#eee;border-radius:4px}.checkbox-container:hover input~.checkmark{background-color:#ccc}.checkbox-container input:checked~.checkmark{background-color:var(--primary-blue)}.checkmark:after{content:"";position:absolute;display:none}.checkbox-container input:checked~.checkmark:after{display:block}.checkbox-container .checkmark:after{left:9px;top:5px;width:5px;height:10px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg)}.full-width{margin-top:1.5rem}.radio-pills{display:flex;flex-wrap:wrap;gap:.75rem}.radio-pills label{display:inline-block;padding:.5rem 1rem;border:1px solid #ddd;border-radius:20px;cursor:pointer;transition:all .2s ease}.radio-pills input[type=radio]{display:none}.radio-pills input[type=radio]:checked+label{background-color:var(--primary-blue);color:#fff;border-color:var(--primary-blue)}.validation-message-container{min-height:20px;margin-top:.5rem}#validation-message{font-size:.8rem;color:red;text-align:center}.hidden{display:none!important}.choice-buttons{display:flex;flex-direction:column;gap:1rem;margin-top:1.5rem}.choice-btn{width:100%;padding:1rem;border:2px solid #eee;border-radius:8px;background-color:transparent;text-align:left;cursor:pointer;transition:all .2s ease}.choice-btn:hover{border-color:var(--primary-blue);background-color:#f8faff}.choice-title{display:block;font-size:1.1rem;font-weight:600;margin-bottom:.25rem}.choice-subtitle{display:block;font-size:.9rem;color:var(--text-light)}.panel-header{display:flex;align-items:center;margin-bottom:1.5rem;gap:1rem}.back-btn{background:none;border:none;font-size:1.5rem;cursor:pointer;padding:0}.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,.5);z-index:2000;display:none;justify-content:center;align-items:center;opacity:0;transition:opacity .3s ease}.modal-overlay.show{display:flex;opacity:1}.modal-content{background-color:#fff;padding:2rem;border-radius:12px;width:90%;max-width:600px;max-height:80vh;display:flex;flex-direction:column}.modal-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee;padding-bottom:1rem;margin-bottom:1rem}.modal-header h3{font-size:1.5rem}.close-btn{font-size:2rem;border:none;background:none;cursor:pointer;color:var(--text-light)}.modal-body{overflow-y:auto;flex-grow:1}.modal-footer{border-top:1px solid #eee;padding-top:1rem;margin-top:1rem;text-align:right}.guide-card,.addon-card{display:flex;align-items:center;gap:1rem;padding:1rem;border:1px solid #eee;border-radius:8px;margin-bottom:1rem}.guide-photo{width:60px;height:60px;border-radius:50%;object-fit:cover}.guide-info,.addon-info{flex-grow:1}.guide-info h5,.addon-info h5{font-size:1.1rem;margin-bottom:.25rem}.guide-skills{display:flex;gap:.5rem;margin-top:.5rem}.guide-skills span{font-size:.8rem;background-color:#eee;padding:.25rem .5rem;border-radius:4px}.guide-price,.addon-price{font-weight:700;font-size:1.1rem;text-align:right}.quantity-selector{display:flex;align-items:center;gap:.5rem}.quantity-selector button{width:30px;height:30px;border:1px solid #ddd;background-color:#f9f9f9;font-size:1.2rem;cursor:pointer}.quantity-selector input{width:40px;text-align:center;border:1px solid #ddd;padding:.5rem;border-radius:4px;-moz-appearance:textfield}@media (max-width:768px){.detail-hero{padding:10rem 0 6rem 0}.info-header h1{font-size:2.2rem}.detail-content .container{flex-direction:column}.sidebar-content{position:static;width:100%}}
-/* Buka frontend/detail.css, tambahkan di paling bawah */
+window.addEventListener('DOMContentLoaded', async () => {
 
-/* --- MOBILE STICKY BOOKING BAR --- */
-.mobile-booking-bar {
-    display: none; /* Sembunyikan di desktop */
-    position: fixed;
-    bottom: 60px; /* Di atas bottom nav (tinggi nav ~60px) */
-    left: 0;
-    width: 100%;
-    background-color: white;
-    padding: 1rem;
-    box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
-    z-index: 900;
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid #eee;
-}
-
-.mobile-booking-bar .price-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.mobile-booking-bar .label {
-    font-size: 0.8rem;
-    color: var(--text-light);
-}
-
-.mobile-booking-bar .price {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #ff5e1f;
-}
-
-.mobile-booking-bar button {
-    background-color: var(--primary-blue);
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 1rem;
-}
-
-/* TAMPILKAN HANYA DI MOBILE */
-@media (max-width: 768px) {
-    .mobile-booking-bar {
-        display: flex;
+    // --- 0. CEK STATUS LOGIN (Mobile Nav) ---
+    function checkLoginStatus() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        const mobileAccountLink = document.querySelector('.bottom-nav a[href*="login.html"], .bottom-nav a[href*="akun.html"]');
+        if (isLoggedIn === 'true' && mobileAccountLink) {
+            mobileAccountLink.href = 'akun.html';
+        }
     }
+    checkLoginStatus(); 
+
+    // --- 1. FUNGSI KEAMANAN & UTILITAS ---
+    function validateUserAccess(actionName) {
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        if (isLoggedIn !== 'true') {
+            const confirmLogin = confirm(`Fitur "${actionName}" hanya tersedia untuk Member.\n\nSilakan masuk atau daftar akun gratis untuk melanjutkan.`);
+            if (confirmLogin) window.location.href = 'login.html';
+            return false;
+        }
+        return true;
+    }
+
+    function showError(message) {
+        const mainContent = document.querySelector('main');
+        if (mainContent) mainContent.innerHTML = `<h1 style="text-align: center; padding: 4rem 0;">${message}</h1>`;
+    }
+
+    // --- FETCH DATA ---
+    // GANTI URL INI DENGAN URL RENDER ANDA SAAT DEPLOY
+    const API_BASE_URL = 'http://localhost:3000'; // Atau https://outzy-api.onrender.com
     
-    /* Beri jarak extra di konten agar tidak tertutup bar */
-    .detail-content {
-        padding-bottom: 140px; 
+    let allLocationsData = [], allGuidesData = [];
+    try {
+        const locationsResponse = await fetch(`${API_BASE_URL}/api/locations`);
+        if (!locationsResponse.ok) throw new Error('Server Error');
+        allLocationsData = await locationsResponse.json();
+
+        const guidesResponse = await fetch(`${API_BASE_URL}/api/guides`);
+        if (!guidesResponse.ok) throw new Error('Server Error');
+        allGuidesData = await guidesResponse.json();
+    } catch (error) {
+        console.error(error);
+        showError('Gagal memuat data. Pastikan backend berjalan.');
+        return;
     }
-}
-/* --- FIX MOBILE STICKY BAR (Revisi Final) --- */
-.mobile-booking-bar {
-    display: none; /* Sembunyi di desktop */
-    position: fixed;
-    bottom: 0; /* NEMPEL PALING BAWAH */
-    left: 0;
-    width: 100%;
-    background-color: white;
-    padding: 1rem;
-    box-shadow: 0 -4px 15px rgba(0,0,0,0.1); /* Bayangan lebih halus */
-    z-index: 2000; /* Pastikan di atas segalanya */
-    justify-content: space-between;
-    align-items: center;
-    border-top: 1px solid #eee;
-}
 
-.mobile-booking-bar .price-info {
-    display: flex;
-    flex-direction: column;
-}
+    const params = new URLSearchParams(window.location.search);
+    const locationId = parseInt(params.get('id'));
+    const locationData = allLocationsData.find(loc => loc.id === locationId);
 
-.mobile-booking-bar .label {
-    font-size: 0.8rem;
-    color: var(--text-light);
-}
+    if (!locationData) { showError('Lokasi tidak ditemukan!'); return; }
 
-.mobile-booking-bar .price {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #ff5e1f;
-}
+    // --- ELEMEN DOM ---
+    const basecampSelectionPanel = document.getElementById('basecamp-selection-panel');
+    const basecampSelect = document.getElementById('basecamp-select');
+    const bookingTypesContainer = document.getElementById('booking-types-container');
+    const selectRouteMsg = document.getElementById('select-route-msg');
 
-.mobile-booking-bar button {
-    background-color: var(--primary-blue);
-    color: white;
-    border: none;
-    padding: 0.8rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-/* TAMPILKAN HANYA DI MOBILE */
-@media (max-width: 768px) {
-    .mobile-booking-bar {
-        display: flex;
-    }
+    const bookingChoicePanel = document.getElementById('booking-choice-panel');
+    const simpleBookingPanel = document.getElementById('simple-booking-panel');
+    const advancedBookingPanel = document.getElementById('advanced-booking-panel');
     
-    /* SEMBUNYIKAN NAVIGASI BAWAH (Menu Home/Akun) agar tidak dobel */
-    .bottom-nav {
-        display: none !important;
-    }
+    const choiceTiketSajaBtn = document.getElementById('choice-tiket-saja');
+    const choicePaketLengkapBtn = document.getElementById('choice-paket-lengkap');
+    const backBtns = document.querySelectorAll('.back-btn');
+
+    const simpleTotalPriceDisplay = document.getElementById('simple-total-price-display');
+    const totalPriceDisplay = document.getElementById('total-price-display');
+    const mobilePriceDisplay = document.getElementById('mobile-price-display');
     
-    /* Tambah padding di body agar konten terakhir tidak tertutup tombol pesan */
-    body {
-        padding-bottom: 90px !important; 
+    const simplePaxInput = document.getElementById('simple-pax-count');
+    const paxCountInput = document.getElementById('pax-count');
+    
+    // Modal Elements
+    const guideModal = document.getElementById('guide-modal');
+    const addonsModal = document.getElementById('addons-modal');
+    const openGuideModalBtn = document.getElementById('open-guide-modal');
+    const openAddonsModalBtn = document.getElementById('open-addons-modal');
+    
+    let currentBasecamp = null;
+    let selectedGuides = [];
+    let selectedAddons = {}; 
+
+    // --- INISIALISASI HALAMAN ---
+    if (locationData.basecamps && locationData.basecamps.length > 0) {
+        if (basecampSelectionPanel) basecampSelectionPanel.classList.remove('hidden');
+        if (basecampSelect) {
+            basecampSelect.innerHTML = '<option value="" disabled selected>-- Pilih Jalur --</option>';
+            locationData.basecamps.forEach((bc, index) => {
+                basecampSelect.innerHTML += `<option value="${index}">${bc.name}</option>`;
+            });
+            basecampSelect.addEventListener('change', (e) => {
+                const index = e.target.value;
+                updateView(locationData.basecamps[index], true, true);
+                document.querySelectorAll('.basecamp-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.textContent === locationData.basecamps[index].name);
+                });
+            });
+        }
+        if (bookingTypesContainer) bookingTypesContainer.classList.add('hidden');
+        if (selectRouteMsg) selectRouteMsg.classList.remove('hidden');
+        updateView(locationData.basecamps[0], true, false);
+    } else {
+        if (basecampSelectionPanel) basecampSelectionPanel.classList.add('hidden');
+        if (bookingTypesContainer) bookingTypesContainer.classList.remove('hidden');
+        if (selectRouteMsg) selectRouteMsg.classList.add('hidden');
+        updateView(locationData, false, true);
     }
-}
+
+    // --- UPDATE VIEW FUNCTION ---
+    function updateView(selectedData, isBasecamp = false, enableBooking = true) {
+        currentBasecamp = selectedData;
+        selectedGuides = [];
+        selectedAddons = {};
+        
+        if (openGuideModalBtn) openGuideModalBtn.textContent = 'Pilih';
+        if (openAddonsModalBtn) openAddonsModalBtn.textContent = 'Pilih';
+
+        const mainTitle = isBasecamp ? locationData.mountain_name : selectedData.title;
+        document.title = `${mainTitle} - Outzy`;
+        document.querySelector('.detail-hero').style.backgroundImage = `linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.6)), url('${selectedData.image}')`;
+        document.querySelector('.info-header h1').textContent = mainTitle;
+        document.querySelector('.info-header p').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${isBasecamp ? locationData.location : selectedData.location}`;
+        
+        const activeTab = document.querySelector('.tab-link.active')?.dataset.tab || 'deskripsi';
+        if (selectedData.details && document.getElementById('tab-content-container')) {
+            document.getElementById('tab-content-container').innerHTML = selectedData.details[activeTab];
+        }
+
+        if (isBasecamp) {
+            if (enableBooking) {
+                if (bookingTypesContainer) bookingTypesContainer.classList.remove('hidden');
+                if (selectRouteMsg) selectRouteMsg.classList.add('hidden');
+                if (basecampSelect) basecampSelect.value = locationData.basecamps.findIndex(bc => bc.name === selectedData.name);
+            } else {
+                showPanel(bookingChoicePanel);
+            }
+        }
+
+        renderTimeOptions(selectedData);
+        calculateTotals();
+    }
+
+    // --- FIX: RENDER TIME OPTIONS UNIK UNTUK TIAP PANEL ---
+    function renderTimeOptions(data) {
+        // Elemen Advanced
+        const advContainer = document.getElementById('climb-time-options');
+        const advSection = document.getElementById('climb-time-section');
+        
+        // Elemen Simple
+        const simpleContainer = document.getElementById('simple-climb-time-options');
+        const simpleSection = document.getElementById('simple-climb-time-section');
+        
+        if (data.climb_times && data.climb_times.length > 0) {
+            // Render untuk Advanced (ID & Name beda)
+            if (advContainer) {
+                advContainer.innerHTML = data.climb_times.map((t, i) => 
+                    `<input type="radio" id="adv-t-${t}" name="adv-time" value="${t}" ${i===0?'checked':''}><label for="adv-t-${t}">${t}</label>`
+                ).join('');
+                if(advSection) advSection.style.display = 'block';
+            }
+
+            // Render untuk Simple (ID & Name beda)
+            if (simpleContainer) {
+                simpleContainer.innerHTML = data.climb_times.map((t, i) => 
+                    `<input type="radio" id="simple-t-${t}" name="simple-time" value="${t}" ${i===0?'checked':''}><label for="simple-t-${t}">${t}</label>`
+                ).join('');
+                if(simpleSection) simpleSection.style.display = 'block';
+            }
+        } else {
+            if(advSection) advSection.style.display = 'none';
+            if(simpleSection) simpleSection.style.display = 'none';
+        }
+    }
+
+    // --- RENDER TOMBOL JALUR DI KONTEN UTAMA ---
+    if (locationData.basecamps) {
+        const basecampButtonsContainer = document.querySelector('.basecamp-buttons');
+        if (basecampButtonsContainer) {
+            basecampButtonsContainer.innerHTML = '';
+            locationData.basecamps.forEach((bc) => {
+                const button = document.createElement('button');
+                button.className = 'basecamp-btn';
+                button.textContent = bc.name;
+                if(currentBasecamp && bc.name === currentBasecamp.name) button.classList.add('active'); 
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('.basecamp-btn').forEach(b => b.classList.remove('active'));
+                    button.classList.add('active');
+                    updateView(bc, true, true);
+                });
+                basecampButtonsContainer.appendChild(button);
+            });
+        }
+    } else {
+        const selector = document.querySelector('.basecamp-selector');
+        if(selector) selector.style.display = 'none';
+    }
+
+    // --- LOGIKA ADDONS & GUIDE ---
+    if (openAddonsModalBtn) {
+        openAddonsModalBtn.addEventListener('click', () => {
+            if (currentBasecamp.addons && currentBasecamp.addons.length > 0) {
+                if(addonsModal) addonsModal.classList.add('show');
+                const container = document.getElementById('addons-list-container');
+                if (container) {
+                    container.innerHTML = currentBasecamp.addons.map(addon => `
+                        <div class="addon-card">
+                            <div class="addon-info">
+                                <h5>${addon.name}</h5>
+                                <p class="addon-price">Rp ${parseInt(addon.price).toLocaleString('id-ID')} / hari</p>
+                            </div>
+                            <div class="quantity-selector">
+                                <button type="button" class="quantity-btn" data-action="decrease" data-id="${addon.id}">-</button>
+                                <input type="number" class="quantity-input" value="${selectedAddons[addon.id] || 0}" min="0" data-id="${addon.id}" readonly>
+                                <button type="button" class="quantity-btn" data-action="increase" data-id="${addon.id}">+</button>
+                            </div>
+                        </div>
+                    `).join('');
+                    container.querySelectorAll('.quantity-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            const action = btn.dataset.action;
+                            const id = btn.dataset.id;
+                            const input = container.querySelector(`.quantity-input[data-id="${id}"]`);
+                            if (input) {
+                                let value = parseInt(input.value);
+                                if (action === 'increase') value++;
+                                if (action === 'decrease' && value > 0) value--;
+                                input.value = value;
+                            }
+                        });
+                    });
+                }
+            }
+        });
+    }
+
+    const confirmAddonsBtn = document.getElementById('confirm-addons-btn');
+    if (confirmAddonsBtn) {
+        confirmAddonsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            selectedAddons = {}; 
+            let totalItems = 0;
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                const quantity = parseInt(input.value);
+                if (quantity > 0) {
+                    selectedAddons[input.dataset.id] = quantity;
+                    totalItems += quantity;
+                }
+            });
+            if (openAddonsModalBtn) openAddonsModalBtn.textContent = totalItems > 0 ? `${totalItems} Item Terpilih` : 'Pilih';
+            calculateTotals(); 
+            if (addonsModal) addonsModal.classList.remove('show');
+        });
+    }
+
+    if (openGuideModalBtn) {
+        openGuideModalBtn.addEventListener('click', () => {
+            if (currentBasecamp.guides && currentBasecamp.guides.length > 0) {
+                guideModal.classList.add('show');
+                const container = document.getElementById('guide-list-container');
+                container.innerHTML = currentBasecamp.guides.map(guideId => {
+                    const guide = allGuidesData.find(g => g.id === guideId);
+                    if (!guide) return '';
+                    return `
+                        <div class="guide-card">
+                            <label class="checkbox-container">
+                                <input type="checkbox" class="guide-checkbox" value="${guide.id}" ${selectedGuides.includes(guide.id) ? 'checked' : ''}>
+                                <span class="checkmark"></span>
+                            </label>
+                            <img src="${guide.photo || 'aset/guides/default.jpg'}" class="guide-photo">
+                            <div class="guide-info">
+                                <h5>${guide.name} (${guide.age} thn)</h5>
+                                <p>⭐️ ${guide.rating}</p>
+                                <div class="guide-skills">${(guide.skills || []).map(skill => `<span>${skill}</span>`).join('')}</div>
+                            </div>
+                            <div class="guide-price">Rp ${parseInt(guide.price).toLocaleString('id-ID')}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        });
+    }
+
+    const confirmGuideBtn = document.getElementById('confirm-guide-btn');
+    if (confirmGuideBtn) {
+        confirmGuideBtn.addEventListener('click', () => {
+            selectedGuides = [];
+            document.querySelectorAll('.guide-checkbox:checked').forEach(checkbox => selectedGuides.push(checkbox.value));
+            if (openGuideModalBtn) openGuideModalBtn.textContent = selectedGuides.length > 0 ? `${selectedGuides.length} Terpilih` : 'Pilih';
+            calculateTotals();
+            if (guideModal) guideModal.classList.remove('show');
+        });
+    }
+
+    const closeAddonsModalBtn = document.getElementById('close-addons-modal');
+    const closeGuideModalBtn = document.getElementById('close-guide-modal');
+    if (closeAddonsModalBtn && addonsModal) closeAddonsModalBtn.addEventListener('click', () => addonsModal.classList.remove('show'));
+    if (closeGuideModalBtn && guideModal) closeGuideModalBtn.addEventListener('click', () => guideModal.classList.remove('show'));
+
+    // --- PERHITUNGAN HARGA ---
+    function calculateTotals() {
+        if (!currentBasecamp) return;
+        const price = parseInt(currentBasecamp.price);
+        
+        const sPax = parseInt(simplePaxInput?.value) || 1;
+        if(simpleTotalPriceDisplay) simpleTotalPriceDisplay.textContent = `Rp ${(sPax * price).toLocaleString('id-ID')}`;
+
+        const aPax = parseInt(paxCountInput?.value) || 1;
+        let total = aPax * price; 
+        
+        selectedGuides.forEach(id => {
+            const g = allGuidesData.find(x => x.id === id);
+            if(g) total += parseInt(g.price);
+        });
+
+        for (const [id, qty] of Object.entries(selectedAddons)) {
+            const addon = currentBasecamp.addons.find(a => a.id === id);
+            if(addon) total += parseInt(addon.price) * qty;
+        }
+
+        const formattedTotal = `Rp ${total.toLocaleString('id-ID')}`;
+        if(totalPriceDisplay) totalPriceDisplay.textContent = formattedTotal;
+
+        if (mobilePriceDisplay) {
+            if (advancedBookingPanel && !advancedBookingPanel.classList.contains('hidden')) {
+                mobilePriceDisplay.textContent = formattedTotal;
+            } else {
+                mobilePriceDisplay.textContent = `Rp ${(sPax * price).toLocaleString('id-ID')}`;
+            }
+        }
+    }
+
+    if(simplePaxInput) simplePaxInput.addEventListener('input', calculateTotals);
+    if(paxCountInput) paxCountInput.addEventListener('input', calculateTotals);
+
+    function showPanel(panel) {
+        [bookingChoicePanel, simpleBookingPanel, advancedBookingPanel].forEach(p => { if(p) p.classList.add('hidden'); });
+        if(panel) panel.classList.remove('hidden');
+        calculateTotals(); 
+    }
+    if(choiceTiketSajaBtn) choiceTiketSajaBtn.addEventListener('click', () => showPanel(simpleBookingPanel));
+    if(choicePaketLengkapBtn) choicePaketLengkapBtn.addEventListener('click', () => showPanel(advancedBookingPanel));
+    backBtns.forEach(btn => btn.addEventListener('click', () => showPanel(bookingChoicePanel)));
+
+    const downloadMapBtn = document.getElementById('download-map-btn');
+    if (downloadMapBtn) {
+        downloadMapBtn.addEventListener('click', () => {
+            if (validateUserAccess('Download Peta Offline')) {
+                downloadMapBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ...';
+                downloadMapBtn.disabled = true;
+                setTimeout(() => {
+                    downloadMapBtn.innerHTML = '<i class="fa-solid fa-check"></i> Tersimpan';
+                    downloadMapBtn.style.background = '#16a34a';
+                    alert('Peta berhasil diunduh!');
+                }, 1500);
+            }
+        });
+    }
+
+    // --- LOGIKA KIRIM PESANAN KE BACKEND ---
+    const bookBtns = [document.getElementById('book-now-btn'), document.getElementById('book-ticket-btn')];
+    
+    bookBtns.forEach(btn => {
+        if (!btn) return;
+
+        btn.addEventListener('click', async (e) => {
+            if (!validateUserAccess('Booking')) return;
+
+            const userEmail = localStorage.getItem('userEmail');
+            let finalPrice = 0;
+            let dateInfo = '';
+            let timeInfo = ''; // Variable waktu
+
+            const isAdvanced = !document.getElementById('advanced-booking-panel').classList.contains('hidden');
+
+            if (isAdvanced) {
+                const priceText = document.getElementById('total-price-display').textContent;
+                finalPrice = parseInt(priceText.replace(/[^0-9]/g, ''));
+                dateInfo = document.getElementById('start-date').value;
+                
+                // Ambil Waktu dari Radio Button ADVANCED
+                const timeInput = document.querySelector('input[name="adv-time"]:checked');
+                if (timeInput) timeInfo = timeInput.value;
+
+            } else {
+                const priceText = document.getElementById('simple-total-price-display').textContent;
+                finalPrice = parseInt(priceText.replace(/[^0-9]/g, ''));
+                dateInfo = document.getElementById('simple-date').value;
+
+                // Ambil Waktu dari Radio Button SIMPLE
+                const timeInput = document.querySelector('input[name="simple-time"]:checked');
+                if (timeInput) timeInfo = timeInput.value;
+            }
+
+            if (finalPrice === 0 || !dateInfo) {
+                alert("Mohon lengkapi tanggal dan data pemesanan.");
+                return;
+            }
+
+            // Gabungkan Tanggal dan Waktu agar informatif
+            const fullDateInfo = timeInfo ? `${dateInfo} (Pukul ${timeInfo})` : dateInfo;
+
+            const orderData = {
+                userEmail: userEmail,
+                locationName: currentBasecamp ? `${locationData.mountain_name} (${currentBasecamp.name})` : locationData.title,
+                date: fullDateInfo, 
+                totalPrice: finalPrice,
+                imageUrl: currentBasecamp ? currentBasecamp.image : locationData.image
+            };
+
+            try {
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+                btn.disabled = true;
+
+                const response = await fetch(`${API_BASE_URL}/api/orders`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+
+                if (response.ok) {
+                    alert('✅ Pesanan Berhasil! Tiket telah terbit.');
+                    window.location.href = 'pesanan.html';
+                } else {
+                    throw new Error('Gagal memproses pesanan');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Terjadi kesalahan koneksi. Coba lagi.');
+                btn.innerHTML = 'Pesan Sekarang';
+                btn.disabled = false;
+            }
+        });
+    });
+
+    const mobileBookBtn = document.getElementById('mobile-book-btn');
+    if (mobileBookBtn) {
+        mobileBookBtn.addEventListener('click', () => {
+            const advancedPanel = document.getElementById('advanced-booking-panel');
+            const simplePanel = document.getElementById('simple-booking-panel');
+            let targetBtn = null;
+
+            if (advancedPanel && !advancedPanel.classList.contains('hidden')) {
+                targetBtn = document.getElementById('book-now-btn');
+            } else if (simplePanel && !simplePanel.classList.contains('hidden')) {
+                targetBtn = document.getElementById('book-ticket-btn');
+            }
+
+            if (targetBtn) {
+                const bookingCard = document.querySelector('.booking-card');
+                if (bookingCard) bookingCard.scrollIntoView({ behavior: 'smooth' });
+                setTimeout(() => { targetBtn.click(); }, 300);
+            } else {
+                const basecampSelect = document.getElementById('basecamp-selection-panel');
+                if (basecampSelect) {
+                    basecampSelect.scrollIntoView({ behavior: 'smooth' });
+                    alert("Silakan pilih jalur dan tipe tiket terlebih dahulu.");
+                }
+            }
+        });
+    }
+
+    document.querySelectorAll('.tab-link').forEach(link => {
+        link.addEventListener('click', () => {
+            document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+            if (currentBasecamp && currentBasecamp.details) {
+                document.getElementById('tab-content-container').innerHTML = currentBasecamp.details[link.dataset.tab];
+            }
+        });
+    });
+});
