@@ -1,12 +1,13 @@
 document.addEventListener('DOMContentLoaded', async () => {
 
-    // --- 1. KONFIGURASI SERVER ---
-    // PENTING: Gunakan 'http://localhost:3000' saat tes di laptop.
-    // Ganti ke alamat Render HANYA jika sudah upload dan online.
-    const API_BASE_URL = 'https://outzy-api.onrender.com/'; 
-    // const API_BASE_URL = 'https://outzy-api.onrender.com';
+    // --- 1. KONFIGURASI SERVER (PENTING!) ---
+    // Kita gunakan Link Render agar Vercel bisa mengakses data.
+    // Jika nanti mau tes di laptop (localhost) lagi, tukar komentar (//)-nya.
+    
+    // const API_BASE_URL = 'http://localhost:3000'; // <-- Mode Laptop (Localhost)
+    const API_BASE_URL = 'https://outzy-api.onrender.com'; // <-- Mode Online (Vercel/Render)
 
-    // --- 2. VARIABEL GLOBAL (STATE) ---
+    // --- 2. VARIABEL GLOBAL ---
     let allLocations = [];
     let allGuides = [];
     let currentMountain = null;
@@ -15,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let selectedGuides = [];
     let totalPrice = 0;
 
-    // --- 3. FUNGSI CEK LOGIN ---
+    // --- 3. FUNGSI CEK LOGIN (NAVIGASI) ---
     function checkLoginStatus() {
         const isLoggedIn = localStorage.getItem('isLoggedIn');
         const mobileAccountLink = document.querySelector('.bottom-nav a[href*="login.html"], .bottom-nav a[href*="akun.html"]');
@@ -31,30 +32,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     const id = parseInt(params.get('id'));
 
     if (!id) {
-        document.body.innerHTML = '<h2 style="text-align:center; margin-top:50px;">ID tidak valid. <a href="index.html">Kembali</a></h2>';
+        document.body.innerHTML = '<div style="text-align:center; padding:50px;"><h2>ID Tidak Valid</h2><a href="index.html">Kembali</a></div>';
         return;
     }
 
-    // --- 5. FETCH DATA (UTAMA) ---
+    // --- 5. FETCH DATA DARI SERVER ---
     try {
-        // A. Ambil Data Gunung
+        // A. Ambil Data Gunung (Locations)
         const locResponse = await fetch(`${API_BASE_URL}/api/locations`);
         if (!locResponse.ok) throw new Error('Gagal mengambil data lokasi');
         allLocations = await locResponse.json();
 
         // B. Ambil Data Guide (Pemandu)
-        // Kita gunakan try-catch khusus di sini agar kalau API guide error, halaman tetap jalan
+        // Gunakan try-catch terpisah agar jika guide error, halaman tetap jalan
         try {
             const guideResponse = await fetch(`${API_BASE_URL}/api/guides`);
             if (guideResponse.ok) {
                 allGuides = await guideResponse.json();
             }
         } catch (err) {
-            console.warn("Data guide belum tersedia di server:", err);
-            allGuides = []; // Kosongkan jika error
+            console.warn("Info: Data guide belum tersedia atau server guide error.");
+            allGuides = [];
         }
 
-        // C. Cari Gunung yang Sedang Dibuka
+        // C. Cari Gunung yang Sesuai ID
         currentMountain = allLocations.find(item => item.id === id);
         
         if (!currentMountain) {
@@ -66,25 +67,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             currentBasecamp = currentMountain.basecamps[0];
         }
 
-        // E. Render Halaman
+        // E. Tampilkan Halaman
         renderPage();
 
     } catch (error) {
         console.error("Critical Error:", error);
-        const main = document.querySelector('main') || document.body;
-        main.innerHTML = `
+        document.querySelector('main').innerHTML = `
             <div style="text-align:center; padding: 4rem; font-family: sans-serif;">
                 <h2>Gagal Memuat Data 😔</h2>
                 <p>${error.message}</p>
-                <p>Pastikan server backend (node server.js) sudah menyala.</p>
+                <p style="font-size:0.9rem; color:#666;">Cek koneksi internet atau pastikan server Render menyala.</p>
                 <a href="index.html" style="color: blue; text-decoration: underline;">Kembali ke Beranda</a>
             </div>
         `;
     }
 
-    // --- 6. RENDER TAMPILAN ---
+    // --- 6. RENDER TAMPILAN UTAMA ---
     function renderPage() {
-        // Judul & Lokasi
+        // Isi Judul & Lokasi
         const titleEl = document.getElementById('nama-gunung');
         const locEl = document.getElementById('lokasi-gunung');
         
@@ -102,7 +102,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderBasecampSelector() {
         const container = document.getElementById('basecamp-selection-panel');
         
-        // Jika gunung ini tidak punya basecamp (misal pantai), sembunyikan dropdown
         if (!currentMountain.basecamps || currentMountain.basecamps.length === 0) {
             if(container) container.style.display = 'none';
             return;
@@ -118,12 +117,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             html += `</select>`;
             container.innerHTML = html;
 
-            // Event saat ganti jalur
+            // Event Listener: Saat ganti jalur
             document.getElementById('basecamp-select').addEventListener('change', (e) => {
                 const idx = e.target.value;
                 currentBasecamp = currentMountain.basecamps[idx];
                 
-                // Reset pilihan saat ganti jalur
+                // Reset pilihan alat & guide saat ganti jalur
                 selectedAddons = []; 
                 selectedGuides = [];
                 
@@ -148,18 +147,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         const activeTab = document.querySelector('.tab-link.active');
         if (activeTab) renderTabContent(activeTab.dataset.tab);
 
-        // Render Fitur Tambahan
-        renderAddons(); // Sewa Alat
-        renderGuides(); // Pemandu
+        // Render Ulang List Alat & Guide
+        renderAddons(); 
+        renderGuides(); 
 
-        // Hitung Harga Total
+        // Hitung Ulang Harga
         calculateTotal();
     }
 
     // --- 9. RENDER ADD-ONS (SEWA ALAT) ---
     function renderAddons() {
         const container = document.getElementById('addons-container');
-        if (!container) return; // Jika div tidak ada di HTML, lewati
+        if (!container) return; // Skip jika elemen tidak ada di HTML
 
         let html = `<div style="margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
                     <h4 style="margin-bottom:10px; font-size:16px;">Sewa Alat (Opsional)</h4>`;
@@ -181,7 +180,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         html += `</div>`;
         container.innerHTML = html;
 
-        // Event Listener Checkbox
+        // Pasang Event Listener
         container.querySelectorAll('.addon-checkbox').forEach(box => {
             box.addEventListener('change', calculateTotal);
         });
@@ -189,10 +188,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // --- 10. RENDER GUIDES (PEMANDU) ---
     function renderGuides() {
-        // Kita butuh container baru di HTML untuk list guide
-        // Jika Anda belum punya div id="guides-container", kode ini akan membuatnya otomatis di bawah addons
+        // Cari atau Buat Container Guide
         let container = document.getElementById('guides-container');
-        
         if (!container) {
             const addonsContainer = document.getElementById('addons-container');
             if (addonsContainer) {
@@ -207,18 +204,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         let html = `<div style="margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
                     <h4 style="margin-bottom:10px; font-size:16px;">Pemandu (Opsional)</h4>`;
 
-        // Cek apakah basecamp ini punya daftar ID guide (misal: ['p01', 'p02'])
+        // Cek apakah basecamp ini punya guide dan data guide server ada
         if (currentBasecamp.guides && currentBasecamp.guides.length > 0 && allGuides.length > 0) {
             
             currentBasecamp.guides.forEach(guideId => {
-                // Cari data detail guide berdasarkan ID
+                // Cocokkan ID dari basecamp dengan ID di database Guides
                 const guideData = allGuides.find(g => g.id === guideId);
                 
                 if (guideData) {
                     html += `
                     <div style="display:flex; align-items:center; margin-bottom:15px; border:1px solid #f0f0f0; padding:10px; border-radius:8px;">
                         <input type="checkbox" class="guide-checkbox" value="${guideData.id}" data-price="${guideData.price}" data-name="${guideData.name}" style="margin-right:10px; transform:scale(1.2);">
-                        <img src="${guideData.photo}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; margin-right:10px;">
+                        <img src="${guideData.photo}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; margin-right:10px;" onerror="this.src='aset/default-user.png'">
                         <div style="flex-grow:1;">
                             <div style="font-weight:bold;">${guideData.name}</div>
                             <div style="font-size:0.8rem; color:#666;">⭐ ${guideData.rating} • ${guideData.skills.join(', ')}</div>
@@ -228,19 +225,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             });
         } else {
-            html += `<p style="color:#777; font-size: 0.9rem;">Tidak ada pemandu tersedia saat ini.</p>`;
+            html += `<p style="color:#777; font-size: 0.9rem;">Tidak ada pemandu tersedia.</p>`;
         }
         
         html += `</div>`;
         container.innerHTML = html;
 
-        // Event Listener Checkbox Guide
+        // Pasang Event Listener
         container.querySelectorAll('.guide-checkbox').forEach(box => {
             box.addEventListener('change', calculateTotal);
         });
     }
 
-    // --- 11. SISTEM TAB (DESKRIPSI / INFO) ---
+    // --- 11. SISTEM TAB (Deskripsi/Info) ---
     function renderTabContent(key) {
         const container = document.getElementById('tab-content-container') || document.getElementById('deskripsi-lengkap');
         if (container && currentBasecamp.details) {
@@ -261,40 +258,38 @@ document.addEventListener('DOMContentLoaded', async () => {
         let ticketPrice = parseInt(currentBasecamp.price || 0);
         let total = ticketPrice;
 
-        // A. Hitung Addons (Alat)
+        // A. Total Alat
         selectedAddons = [];
         document.querySelectorAll('.addon-checkbox:checked').forEach(box => {
             const price = parseInt(box.dataset.price);
-            const name = box.dataset.name;
             total += price;
-            selectedAddons.push({ name, price });
+            selectedAddons.push({ name: box.dataset.name, price: price });
         });
 
-        // B. Hitung Guide
+        // B. Total Guide
         selectedGuides = [];
         document.querySelectorAll('.guide-checkbox:checked').forEach(box => {
             const price = parseInt(box.dataset.price);
-            const name = box.dataset.name;
             total += price;
-            selectedGuides.push({ name, price });
+            selectedGuides.push({ name: box.dataset.name, price: price });
         });
 
-        // Update Tampilan Harga Tiket Dasar
+        // Update Tampilan Harga Tiket
         const priceEl = document.getElementById('harga-tiket');
         if (priceEl) priceEl.innerText = `Rp ${ticketPrice.toLocaleString('id-ID')}`;
 
-        // Update Tampilan Total Estimasi
+        // Update Tampilan Total
         const totalEl = document.getElementById('total-price-display');
         if (totalEl) totalEl.innerText = `Rp ${total.toLocaleString('id-ID')}`;
         
-        // Update di Mobile Sticky Bar (jika ada)
+        // Update Tampilan Mobile (jika ada)
         const mobileTotalEl = document.getElementById('mobile-price-display');
         if (mobileTotalEl) mobileTotalEl.innerText = `Rp ${total.toLocaleString('id-ID')}`;
 
         totalPrice = total;
     }
 
-    // --- 13. LOGIKA TOMBOL BOOKING ---
+    // --- 13. TOMBOL BOOKING ---
     const bookBtns = document.querySelectorAll('.btn-book, #tombol-pesan-bawah, #book-now-btn, #mobile-book-btn');
 
     bookBtns.forEach(btn => {
@@ -308,7 +303,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            // Validasi Data
             if (!currentBasecamp) {
                 alert("Data jalur belum dimuat.");
                 return;
@@ -320,42 +314,27 @@ document.addEventListener('DOMContentLoaded', async () => {
                 mountainName: currentMountain.mountain_name,
                 basecampName: currentBasecamp.name,
                 basecampId: currentBasecamp.id,
-                date: new Date().toISOString().split('T')[0], // Default hari ini
-                items: [...selectedAddons, ...selectedGuides], // Gabung alat & guide
+                date: new Date().toISOString().split('T')[0],
+                items: [...selectedAddons, ...selectedGuides],
                 totalPrice: totalPrice,
                 image: currentBasecamp.image
             };
 
-            // Simpan ke LocalStorage (Untuk halaman Payment)
+            // Simpan ke LocalStorage
             localStorage.setItem('tempOrder', JSON.stringify(orderData));
 
-            // Efek Loading pada Tombol
+            // Feedback Loading
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
             btn.disabled = true;
 
-            // Simulasi Kirim ke Server (Opsional)
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/orders`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(orderData)
-                });
-                
-                if (response.ok) {
-                    alert(`✅ Pesanan Berhasil Dibuat!\nTotal: Rp ${totalPrice.toLocaleString()}\n\nSilakan cek halaman Pesanan.`);
-                    window.location.href = 'pesanan.html'; // Redirect jika sukses
-                } else {
-                    throw new Error('Gagal menyimpan pesanan');
-                }
-            } catch (err) {
-                console.error(err);
-                alert("Simulasi: Pesanan tersimpan di lokal (Server belum terhubung DB).");
-                // window.location.href = 'payment.html'; // Fallback redirect
-            } finally {
+            // Simulasi Kirim (Bisa diganti redirect ke Payment)
+            setTimeout(() => {
+                alert(`Pesanan Berhasil!\nTotal: Rp ${totalPrice.toLocaleString('id-ID')}\n\nSilakan cek halaman Pesanan.`);
+                window.location.href = 'pesanan.html'; // Ganti ke payment.html jika ada
                 btn.innerHTML = originalText;
                 btn.disabled = false;
-            }
+            }, 1000);
         });
     });
 
