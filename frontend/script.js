@@ -1,89 +1,113 @@
-document.addEventListener('DOMContentLoaded', async () => {
-    const locationContainer = document.getElementById('location-container'); // Pastikan ID ini sesuai di HTML
-    const searchInput = document.querySelector('.search-bar input'); // Pastikan class ini sesuai
+// Fungsi untuk memeriksa status login dan memperbarui UI
+function checkLoginStatus() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
     
-    // URL Backend (Ganti jika sudah online)
-    const API_URL = 'http://localhost:3000/api/locations'; 
-    // const API_URL = 'https://outzy-api.onrender.com/api/locations';
-
-    let allLocations = []; // Wadah untuk menyimpan data
-
-    // 1. FUNGSI AMBIL DATA DARI SERVER
-    async function fetchLocations() {
-        try {
-            const response = await fetch(API_URL);
-            if (!response.ok) throw new Error('Gagal mengambil data');
-            
-            allLocations = await response.json();
-            renderLocations(allLocations); // Tampilkan semua data awal
-        } catch (error) {
-            console.error('Error:', error);
-            locationContainer.innerHTML = '<p style="text-align:center;">Gagal memuat data gunung. Pastikan server nyala.</p>';
-        }
+    // Perbarui Navigasi Bawah (Mobile)
+    const mobileAccountLink = document.querySelector('.bottom-nav a[href*="login.html"], .bottom-nav a[href*="akun.html"]');
+    if (isLoggedIn === 'true' && mobileAccountLink) {
+        mobileAccountLink.href = 'akun.html';
     }
 
-    // 2. FUNGSI MENAMPILKAN KARTU GUNUNG (RENDER)
-    function renderLocations(data) {
-        locationContainer.innerHTML = ''; // Bersihkan isi kontainer
+    // Perbarui Navigasi Atas (Desktop)
+    const navLoggedOut = document.getElementById('nav-logged-out');
+    const navLoggedIn = document.getElementById('nav-logged-in');
+    
+    if (isLoggedIn === 'true') {
+        if (navLoggedOut) navLoggedOut.classList.add('hidden');
+        if (navLoggedIn) navLoggedIn.classList.remove('hidden');
+    } else {
+        if (navLoggedOut) navLoggedOut.classList.remove('hidden');
+        if (navLoggedIn) navLoggedIn.classList.add('hidden');
+    }
+}
 
-        if (data.length === 0) {
-            locationContainer.innerHTML = '<p style="text-align:center;">Gunung tidak ditemukan.</p>';
-            return;
-        }
+const resultsContainer = document.querySelector('.results-container');
+const categoryItems = document.querySelectorAll('.category-grid-item');
+const resultsTitle = document.getElementById('results-title');
 
-        data.forEach(location => {
-            // Ambil harga dari basecamp pertama sebagai patokan "Mulai dari..."
-            const startingPrice = location.basecamps && location.basecamps.length > 0 
-                ? parseInt(location.basecamps[0].price).toLocaleString('id-ID')
-                : 'Hubungi Admin';
+let allLocationsData = [];
 
-            // Ambil gambar utama (jika ada di root, atau ambil dari basecamp pertama)
-            let imageSrc = 'aset/merbabu.jpg'; // Default
-            if (location.basecamps && location.basecamps.length > 0) {
-                imageSrc = location.basecamps[0].image;
-            }
-
-            // HTML Kartu Gunung
-            const cardHTML = `
-                <div class="card" onclick="window.location.href='detail.html?id=${location.id}'">
-                    <div class="card-image" style="background-image: url('${imageSrc}');">
-                        <span class="badge">${location.category || 'Hiking'}</span>
-                    </div>
+function displayLocations(locations) {
+    if (!resultsContainer) return;
+    resultsContainer.innerHTML = '';
+    if (!locations || locations.length === 0) {
+        resultsContainer.innerHTML = '<p>Tidak ada lokasi yang ditemukan.</p>';
+        return;
+    }
+    locations.forEach(location => {
+        let cardHTML = '';
+        if (location.basecamps) {
+            const firstBasecamp = location.basecamps[0];
+            const minPrice = Math.min(...location.basecamps.map(bc => parseInt(bc.price)));
+            cardHTML = `
+            <a href="detail.html?id=${location.id}" class="location-card-link">
+                <div class="location-card">
+                    <img src="${firstBasecamp.image}" alt="${location.mountain_name}" class="card-image">
                     <div class="card-content">
-                        <div class="card-header">
-                            <h3>${location.mountain_name}</h3> <div class="rating">⭐ 4.8</div>
-                        </div>
-                        <p class="location"><i class="fa-solid fa-location-dot"></i> ${location.location}</p>
-                        <div class="card-footer">
-                            <div class="price">
-                                <span class="label">Mulai dari</span>
-                                <span class="value">Rp ${startingPrice}</span>
-                            </div>
-                            <button class="btn-detail">Lihat</button>
+                        <h3 class="card-title">${location.mountain_name}</h3>
+                        <p class="card-location">${location.location}</p>
+                        <div class="card-info">
+                            <span class="card-rating"><i class="fa-solid fa-star"></i> ${firstBasecamp.rating}</span>
+                            <span class="card-price">Mulai Rp ${minPrice.toLocaleString('id-ID')}</span>
                         </div>
                     </div>
                 </div>
-            `;
-            locationContainer.innerHTML += cardHTML;
-        });
+            </a>`;
+        } else {
+            cardHTML = `
+            <a href="detail.html?id=${location.id}" class="location-card-link">
+                <div class="location-card">
+                    <img src="${location.image}" alt="${location.title}" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">${location.title}</h3>
+                        <p class="card-location">${location.location}</p>
+                        <div class="card-info">
+                            <span class="card-rating"><i class="fa-solid fa-star"></i> ${location.rating}</span>
+                            <span class="card-price">Rp ${parseInt(location.price).toLocaleString('id-ID')}</span>
+                        </div>
+                    </div>
+                </div>
+            </a>`;
+        }
+        resultsContainer.innerHTML += cardHTML;
+    });
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    checkLoginStatus(); // Panggil fungsi cek login
+
+    try {
+        const response = await fetch('https://outzy-api.onrender.com/api/locations');
+        if (!response.ok) throw new Error('Gagal memuat data lokasi');
+        allLocationsData = await response.json();
+        displayLocations(allLocationsData);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        if(resultsContainer) resultsContainer.innerHTML = '<p style="text-align: center; color: red;">Gagal memuat data dari server.</p>';
     }
-
-    // 3. FUNGSI PENCARIAN (SEARCH) - YANG KITA PERBAIKI
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            const keyword = e.target.value.toLowerCase();
-
-            const filteredData = allLocations.filter(item => {
-                // Cari berdasarkan Nama Gunung ATAU Lokasi
-                // Kita gunakan 'mountain_name' sesuai database baru
-                return item.mountain_name.toLowerCase().includes(keyword) || 
-                       item.location.toLowerCase().includes(keyword);
-            });
-
-            renderLocations(filteredData);
-        });
-    }
-
-    // Jalankan fetch saat halaman dibuka
-    fetchLocations();
 });
+
+if (categoryItems) {
+    categoryItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const selectedCategory = item.dataset.category;
+            const filteredData = allLocationsData.filter(location => {
+                if (selectedCategory === 'All') return true;
+                return location.category === selectedCategory;
+            });
+            if(resultsTitle) resultsTitle.textContent = selectedCategory === 'All' ? 'Populer Minggu Ini' : `Menampilkan hasil untuk "${selectedCategory}"`;
+            displayLocations(filteredData);
+        });
+    });
+}
+
+const header = document.querySelector('.desktop-header');
+const stickyPoint = 50;
+function handleScroll() {
+  if (header && window.pageYOffset > stickyPoint) {
+    header.classList.add('sticky');
+  } else if (header) {
+    header.classList.remove('sticky');
+  }
+}
+window.addEventListener('scroll', handleScroll);
