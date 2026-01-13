@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- 1. KONFIGURASI SERVER ---
     // PENTING: Gunakan 'http://localhost:3000' saat tes di laptop.
     // Ganti ke alamat Render HANYA jika sudah upload dan online.
-    const API_BASE_URL = 'http://localhost:3000'; 
+    const API_BASE_URL = 'https://outzy-api.onrender.com/'; 
     // const API_BASE_URL = 'https://outzy-api.onrender.com';
 
     // --- 2. VARIABEL GLOBAL (STATE) ---
