@@ -1,266 +1,494 @@
 window.addEventListener('DOMContentLoaded', async () => {
 
-    // --- KONFIGURASI ---
-    const API_URL = 'http://localhost:3000/api/locations'; // Backend Anda
-    // const API_URL = 'https://nama-app-anda.onrender.com/api/locations'; // Ganti jika online
-
-    // State Global
-    let allLocationsData = [];
-    let currentMountain = null;
-    let currentBasecamp = null;
-    let selectedAddons = [];
-    let selectedGuide = null;
-    let totalPrice = 0;
-
-    // --- 0. CEK STATUS LOGIN & NAVIGASI MOBILE ---
+    // --- 0. CEK STATUS LOGIN (Mobile Nav) ---
     function checkLoginStatus() {
         const isLoggedIn = localStorage.getItem('isLoggedIn');
         
-        // Update Link Navigasi Bawah (Mobile)
+        // Perbarui Navigasi Bawah (Mobile) agar mengarah ke Akun jika sudah login
         const mobileAccountLink = document.querySelector('.bottom-nav a[href*="login.html"], .bottom-nav a[href*="akun.html"]');
         if (isLoggedIn === 'true' && mobileAccountLink) {
             mobileAccountLink.href = 'akun.html';
-            mobileAccountLink.innerHTML = '<i class="fa-solid fa-user"></i> Akun';
         }
     }
-    checkLoginStatus();
+    checkLoginStatus(); // Jalankan fungsi saat load
 
-    // --- 1. VALIDASI AKSES USER ---
+    // --- 1. FUNGSI KEAMANAN & UTILITAS ---
     function validateUserAccess(actionName) {
         const isLoggedIn = localStorage.getItem('isLoggedIn');
         if (isLoggedIn !== 'true') {
-            const confirmLogin = confirm(`Fitur "${actionName}" hanya untuk Member.\nSilakan login dulu.`);
+            const confirmLogin = confirm(`Fitur "${actionName}" hanya tersedia untuk Member.\n\nSilakan masuk atau daftar akun gratis untuk melanjutkan.`);
             if (confirmLogin) window.location.href = 'login.html';
             return false;
         }
         return true;
     }
 
-    // --- 2. AMBIL DATA DARI SERVER ---
-    const params = new URLSearchParams(window.location.search);
-    const id = parseInt(params.get('id')); // Pastikan jadi integer
+    function showError(message) {
+        const mainContent = document.querySelector('main');
+        if (mainContent) mainContent.innerHTML = `<h1 style="text-align: center; padding: 4rem 0;">${message}</h1>`;
+    }
 
-    if (!id) {
-        alert("ID Gunung tidak valid.");
-        window.location.href = 'index.html';
+    // --- FETCH DATA ---
+    let allLocationsData = [], allGuidesData = [];
+    try {
+        const locationsResponse = await fetch('https://outzy-api.onrender.com/api/locations');
+        if (!locationsResponse.ok) throw new Error('Server Error');
+        allLocationsData = await locationsResponse.json();
+
+        const guidesResponse = await fetch('https://outzy-api.onrender.com/api/guides');
+        if (!guidesResponse.ok) throw new Error('Server Error');
+        allGuidesData = await guidesResponse.json();
+    } catch (error) {
+        console.error(error);
+        showError('Gagal memuat data. Pastikan backend berjalan di port 3000.');
         return;
     }
 
-    try {
-        const response = await fetch(API_URL);
-        if (!response.ok) throw new Error("Gagal mengambil data");
-        
-        allLocationsData = await response.json();
-        
-        // Cari Gunung berdasarkan ID
-        currentMountain = allLocationsData.find(item => item.id === id);
+    const params = new URLSearchParams(window.location.search);
+    const locationId = parseInt(params.get('id'));
+    const locationData = allLocationsData.find(loc => loc.id === locationId);
 
-        if (!currentMountain) throw new Error("Gunung tidak ditemukan di database.");
-        
-        // Set Basecamp Default (Yang pertama)
-        if (currentMountain.basecamps && currentMountain.basecamps.length > 0) {
-            currentBasecamp = currentMountain.basecamps[0];
-        }
+    if (!locationData) { showError('Lokasi tidak ditemukan!'); return; }
 
-        renderPage(); // Tampilkan Data ke Layar
+    // --- ELEMEN DOM ---
+    const basecampSelectionPanel = document.getElementById('basecamp-selection-panel');
+    const basecampSelect = document.getElementById('basecamp-select');
+    const bookingTypesContainer = document.getElementById('booking-types-container');
+    const selectRouteMsg = document.getElementById('select-route-msg');
 
-    } catch (error) {
-        console.error("Error:", error);
-        document.querySelector('main').innerHTML = `<div style="text-align:center; padding:50px;"><h2>Error: ${error.message}</h2><a href="index.html">Kembali</a></div>`;
-    }
+    const bookingChoicePanel = document.getElementById('booking-choice-panel');
+    const simpleBookingPanel = document.getElementById('simple-booking-panel');
+    const advancedBookingPanel = document.getElementById('advanced-booking-panel');
+    
+    const choiceTiketSajaBtn = document.getElementById('choice-tiket-saja');
+    const choicePaketLengkapBtn = document.getElementById('choice-paket-lengkap');
+    const backBtns = document.querySelectorAll('.back-btn');
 
-    // --- 3. RENDER HALAMAN UTAMA ---
-    function renderPage() {
-        // A. Header Info
-        const titleEl = document.getElementById('nama-gunung');
-        const locEl = document.getElementById('lokasi-gunung');
-        const ratingEl = document.querySelector('.rating span');
+    const simpleTotalPriceDisplay = document.getElementById('simple-total-price-display');
+    const totalPriceDisplay = document.getElementById('total-price-display');
+    const mobilePriceDisplay = document.getElementById('mobile-price-display'); // Elemen Harga Mobile
+    
+    const simplePaxInput = document.getElementById('simple-pax-count');
+    const paxCountInput = document.getElementById('pax-count');
+    const startDateInput = document.getElementById('start-date');
+    const endDateInput = document.getElementById('end-date');
+    
+    // Modal Elements
+    const guideModal = document.getElementById('guide-modal');
+    const addonsModal = document.getElementById('addons-modal');
+    const openGuideModalBtn = document.getElementById('open-guide-modal');
+    const openAddonsModalBtn = document.getElementById('open-addons-modal');
+    
+    let currentBasecamp = null;
+    let selectedGuides = [];
+    let selectedAddons = {}; // Format: { "id_alat": jumlah }
 
-        if (titleEl) titleEl.innerText = currentMountain.mountain_name;
-        if (locEl) locEl.innerText = currentMountain.location;
-        if (ratingEl && currentBasecamp) ratingEl.innerText = currentBasecamp.rating || '4.8';
-
-        // B. Render Dropdown Basecamp
-        renderBasecampSelector();
-
-        // C. Update UI Awal
-        updateBasecampUI();
-    }
-
-    // --- 4. RENDER DROPDOWN BASECAMP ---
-    function renderBasecampSelector() {
-        const container = document.getElementById('basecamp-selection-panel'); // Pastikan ada div ini di HTML
-        if (!container || !currentMountain.basecamps) return;
-
-        let html = `<label style="font-weight:bold; display:block; margin-bottom:8px;">Pilih Jalur Pendakian:</label>
-                    <select id="basecamp-select" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd; margin-bottom:15px;">`;
-        
-        currentMountain.basecamps.forEach((bc, index) => {
-            html += `<option value="${index}">Via ${bc.name} - Rp ${parseInt(bc.price).toLocaleString('id-ID')}</option>`;
-        });
-        html += `</select>`;
-
-        container.innerHTML = html;
-
-        // Event Listener Ganti Basecamp
-        document.getElementById('basecamp-select').addEventListener('change', (e) => {
-            const idx = e.target.value;
-            currentBasecamp = currentMountain.basecamps[idx];
-            
-            // Reset pilihan addons saat ganti basecamp
-            selectedAddons = [];
-            selectedGuide = null;
-            
-            updateBasecampUI();
-        });
-    }
-
-    // --- 5. UPDATE UI (Saat Basecamp Berubah) ---
-    function updateBasecampUI() {
-        if (!currentBasecamp) return;
-
-        // 1. Gambar Utama
-        const mainImg = document.getElementById('gambar-utama');
-        if (mainImg) mainImg.src = currentBasecamp.image;
-
-        // 2. Harga Tiket Dasar
-        const priceEl = document.getElementById('harga-tiket');
-        if (priceEl) {
-            priceEl.innerText = `Rp ${parseInt(currentBasecamp.price).toLocaleString('id-ID')}`;
-        }
-
-        // 3. Render Tab (Deskripsi/Info/Fasilitas)
-        renderActiveTab();
-
-        // 4. Render Add-ons (Sewa Alat)
-        renderAddons();
-
-        // 5. Hitung Ulang Total
-        calculateTotal();
-    }
-
-    // --- 6. RENDER ADD-ONS (ALAT & GUIDE) ---
-    function renderAddons() {
-        const container = document.getElementById('addons-container'); // Pastikan ID ini ada di HTML (di bawah dropdown basecamp)
-        if (!container) return;
-
-        let html = `<div style="margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
-                    <h4 style="margin-bottom:10px;">Tambahan (Opsional)</h4>`;
-
-        // A. Render Alat Sewa
-        if (currentBasecamp.addons && currentBasecamp.addons.length > 0) {
-            currentBasecamp.addons.forEach((addon, index) => {
-                html += `
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
-                    <label>
-                        <input type="checkbox" class="addon-checkbox" data-price="${addon.price}" data-name="${addon.name}"> 
-                        ${addon.name}
-                    </label>
-                    <span style="font-size:0.9rem; color:#666;">+Rp ${parseInt(addon.price).toLocaleString('id-ID')}</span>
-                </div>`;
+    // --- INISIALISASI HALAMAN ---
+    if (locationData.basecamps && locationData.basecamps.length > 0) {
+        // Mode Hiking (Multi-Jalur)
+        if (basecampSelectionPanel) basecampSelectionPanel.classList.remove('hidden');
+        if (basecampSelect) {
+            basecampSelect.innerHTML = '<option value="" disabled selected>-- Pilih Jalur --</option>';
+            locationData.basecamps.forEach((bc, index) => {
+                basecampSelect.innerHTML += `<option value="${index}">${bc.name}</option>`;
             });
-        } else {
-            html += `<p style="font-size:0.8rem; color:#999;">Tidak ada sewa alat di jalur ini.</p>`;
+            basecampSelect.addEventListener('change', (e) => {
+                const index = e.target.value;
+                updateView(locationData.basecamps[index], true, true);
+                document.querySelectorAll('.basecamp-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.textContent === locationData.basecamps[index].name);
+                });
+            });
         }
-
-        html += `</div>`;
-        container.innerHTML = html;
-
-        // Event Listener Checkbox
-        document.querySelectorAll('.addon-checkbox').forEach(box => {
-            box.addEventListener('change', calculateTotal);
-        });
+        if (bookingTypesContainer) bookingTypesContainer.classList.add('hidden');
+        if (selectRouteMsg) selectRouteMsg.classList.remove('hidden');
+        updateView(locationData.basecamps[0], true, false);
+    } else {
+        // Mode Umum
+        if (basecampSelectionPanel) basecampSelectionPanel.classList.add('hidden');
+        if (bookingTypesContainer) bookingTypesContainer.classList.remove('hidden');
+        if (selectRouteMsg) selectRouteMsg.classList.add('hidden');
+        updateView(locationData, false, true);
     }
 
-    // --- 7. LOGIKA TAB (Deskripsi/Info) ---
-    function renderActiveTab() {
-        const activeTab = document.querySelector('.tab-link.active');
-        const container = document.getElementById('tab-content-container') || document.getElementById('deskripsi-lengkap');
+    // --- UPDATE VIEW FUNCTION ---
+    function updateView(selectedData, isBasecamp = false, enableBooking = true) {
+        currentBasecamp = selectedData;
+        selectedGuides = [];
+        selectedAddons = {};
         
-        if (activeTab && container && currentBasecamp.details) {
-            const key = activeTab.dataset.tab; // deskripsi, infoJalur, fasilitas, ulasan
-            // Ambil konten dari DB, jika kosong pakai default
-            const content = currentBasecamp.details[key] || '<p>Informasi belum tersedia.</p>';
-            container.innerHTML = content;
+        // Reset Tombol Pilihan
+        if (openGuideModalBtn) openGuideModalBtn.textContent = 'Pilih';
+        if (openAddonsModalBtn) openAddonsModalBtn.textContent = 'Pilih';
+
+        // Update Hero & Judul
+        const mainTitle = isBasecamp ? locationData.mountain_name : selectedData.title;
+        document.title = `${mainTitle} - Outzy`;
+        document.querySelector('.detail-hero').style.backgroundImage = `linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.6)), url('${selectedData.image}')`;
+        document.querySelector('.info-header h1').textContent = mainTitle;
+        document.querySelector('.info-header p').innerHTML = `<i class="fa-solid fa-location-dot"></i> ${isBasecamp ? locationData.location : selectedData.location}`;
+        
+        // Update Tabs
+        const activeTab = document.querySelector('.tab-link.active')?.dataset.tab || 'deskripsi';
+        if (selectedData.details && document.getElementById('tab-content-container')) {
+            document.getElementById('tab-content-container').innerHTML = selectedData.details[activeTab];
+        }
+
+        // Sidebar Logic
+        if (isBasecamp) {
+            if (enableBooking) {
+                if (bookingTypesContainer) bookingTypesContainer.classList.remove('hidden');
+                if (selectRouteMsg) selectRouteMsg.classList.add('hidden');
+                if (basecampSelect) basecampSelect.value = locationData.basecamps.findIndex(bc => bc.name === selectedData.name);
+            } else {
+                showPanel(bookingChoicePanel);
+            }
+        }
+
+        renderTimeOptions(selectedData);
+        calculateTotals();
+    }
+
+    // --- RENDER TOMBOL JALUR DI KONTEN UTAMA ---
+    if (locationData.basecamps) {
+        const basecampButtonsContainer = document.querySelector('.basecamp-buttons');
+        if (basecampButtonsContainer) {
+            basecampButtonsContainer.innerHTML = '';
+            locationData.basecamps.forEach((bc) => {
+                const button = document.createElement('button');
+                button.className = 'basecamp-btn';
+                button.textContent = bc.name;
+                if(currentBasecamp && bc.name === currentBasecamp.name) button.classList.add('active'); 
+                button.addEventListener('click', () => {
+                    document.querySelectorAll('.basecamp-btn').forEach(b => b.classList.remove('active'));
+                    button.classList.add('active');
+                    updateView(bc, true, true);
+                });
+                basecampButtonsContainer.appendChild(button);
+            });
+        }
+    } else {
+        const selector = document.querySelector('.basecamp-selector');
+        if(selector) selector.style.display = 'none';
+    }
+
+    // --- LOGIKA MODAL ADDONS (SEWA PERALATAN) ---
+    if (openAddonsModalBtn) {
+        openAddonsModalBtn.addEventListener('click', () => {
+            if (currentBasecamp.addons && currentBasecamp.addons.length > 0) {
+                if(addonsModal) addonsModal.classList.add('show');
+                const container = document.getElementById('addons-list-container');
+                
+                if (container) {
+                    // Generate HTML untuk item addons
+                    container.innerHTML = currentBasecamp.addons.map(addon => `
+                        <div class="addon-card">
+                            <div class="addon-info">
+                                <h5>${addon.name}</h5>
+                                <p class="addon-price">Rp ${parseInt(addon.price).toLocaleString('id-ID')} / hari</p>
+                            </div>
+                            <div class="quantity-selector">
+                                <button type="button" class="quantity-btn" data-action="decrease" data-id="${addon.id}">-</button>
+                                <input type="number" class="quantity-input" value="${selectedAddons[addon.id] || 0}" min="0" data-id="${addon.id}" readonly>
+                                <button type="button" class="quantity-btn" data-action="increase" data-id="${addon.id}">+</button>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    // Pasang Event Listener ke Tombol (+ / -) yang baru dibuat
+                    container.querySelectorAll('.quantity-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.preventDefault(); // Mencegah submit form
+                            const action = btn.dataset.action;
+                            const id = btn.dataset.id;
+                            const input = container.querySelector(`.quantity-input[data-id="${id}"]`);
+                            
+                            if (input) {
+                                let value = parseInt(input.value);
+                                if (action === 'increase') value++;
+                                if (action === 'decrease' && value > 0) value--;
+                                input.value = value;
+                            }
+                        });
+                    });
+                }
+            }
+        });
+    }
+
+    const confirmAddonsBtn = document.getElementById('confirm-addons-btn');
+    if (confirmAddonsBtn) {
+        confirmAddonsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            selectedAddons = {}; // Reset dulu
+            let totalItems = 0;
+            
+            // Baca nilai dari input di dalam modal
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                const quantity = parseInt(input.value);
+                if (quantity > 0) {
+                    selectedAddons[input.dataset.id] = quantity;
+                    totalItems += quantity;
+                }
+            });
+
+            // Update teks tombol
+            if (openAddonsModalBtn) openAddonsModalBtn.textContent = totalItems > 0 ? `${totalItems} Item Terpilih` : 'Pilih';
+            
+            calculateTotals(); // Hitung ulang harga
+            if (addonsModal) addonsModal.classList.remove('show');
+        });
+    }
+
+    const closeAddonsModalBtn = document.getElementById('close-addons-modal');
+    if (closeAddonsModalBtn && addonsModal) closeAddonsModalBtn.addEventListener('click', () => addonsModal.classList.remove('show'));
+
+
+    // --- LOGIKA MODAL GUIDE (PEMANDU) ---
+    if (openGuideModalBtn) {
+        openGuideModalBtn.addEventListener('click', () => {
+            if (currentBasecamp.guides && currentBasecamp.guides.length > 0) {
+                guideModal.classList.add('show');
+                const container = document.getElementById('guide-list-container');
+                container.innerHTML = currentBasecamp.guides.map(guideId => {
+                    const guide = allGuidesData.find(g => g.id === guideId);
+                    if (!guide) return '';
+                    return `
+                        <div class="guide-card">
+                            <label class="checkbox-container">
+                                <input type="checkbox" class="guide-checkbox" value="${guide.id}" ${selectedGuides.includes(guide.id) ? 'checked' : ''}>
+                                <span class="checkmark"></span>
+                            </label>
+                            <img src="${guide.photo || 'aset/guides/default.jpg'}" class="guide-photo">
+                            <div class="guide-info">
+                                <h5>${guide.name} (${guide.age} thn)</h5>
+                                <p>⭐️ ${guide.rating}</p>
+                                <div class="guide-skills">${(guide.skills || []).map(skill => `<span>${skill}</span>`).join('')}</div>
+                            </div>
+                            <div class="guide-price">Rp ${parseInt(guide.price).toLocaleString('id-ID')}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        });
+    }
+
+    const confirmGuideBtn = document.getElementById('confirm-guide-btn');
+    if (confirmGuideBtn) {
+        confirmGuideBtn.addEventListener('click', () => {
+            selectedGuides = [];
+            document.querySelectorAll('.guide-checkbox:checked').forEach(checkbox => selectedGuides.push(checkbox.value));
+            if (openGuideModalBtn) openGuideModalBtn.textContent = selectedGuides.length > 0 ? `${selectedGuides.length} Terpilih` : 'Pilih';
+            calculateTotals();
+            if (guideModal) guideModal.classList.remove('show');
+        });
+    }
+
+    const closeGuideModalBtn = document.getElementById('close-guide-modal');
+    if (closeGuideModalBtn && guideModal) closeGuideModalBtn.addEventListener('click', () => guideModal.classList.remove('show'));
+
+
+    // --- PERHITUNGAN HARGA ---
+    function calculateTotals() {
+        if (!currentBasecamp) return;
+        const price = parseInt(currentBasecamp.price);
+        
+        // Simple Booking
+        const sPax = parseInt(simplePaxInput?.value) || 1;
+        if(simpleTotalPriceDisplay) simpleTotalPriceDisplay.textContent = `Rp ${(sPax * price).toLocaleString('id-ID')}`;
+
+        // Advanced Booking
+        const aPax = parseInt(paxCountInput?.value) || 1;
+        let total = aPax * price; 
+        
+        // Tambah Harga Guide
+        selectedGuides.forEach(id => {
+            const g = allGuidesData.find(x => x.id === id);
+            if(g) total += parseInt(g.price);
+        });
+
+        // Tambah Harga Addons
+        for (const [id, qty] of Object.entries(selectedAddons)) {
+            const addon = currentBasecamp.addons.find(a => a.id === id);
+            if(addon) total += parseInt(addon.price) * qty;
+        }
+
+        const formattedTotal = `Rp ${total.toLocaleString('id-ID')}`;
+        
+        // Update Desktop
+        if(totalPriceDisplay) totalPriceDisplay.textContent = formattedTotal;
+
+        // Update Mobile Sticky Bar
+        if (mobilePriceDisplay) {
+            // Logika: Jika sedang buka Advanced Panel, pakai total Advanced. Jika tidak, pakai Simple.
+            if (advancedBookingPanel && !advancedBookingPanel.classList.contains('hidden')) {
+                mobilePriceDisplay.textContent = formattedTotal;
+            } else {
+                // Default ke harga tiket dasar x jumlah (simple)
+                mobilePriceDisplay.textContent = `Rp ${(sPax * price).toLocaleString('id-ID')}`;
+            }
         }
     }
 
-    // Event Listener Klik Tab
-    document.querySelectorAll('.tab-link').forEach(link => {
-        link.addEventListener('click', function() {
-            document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
-            this.classList.add('active');
-            renderActiveTab();
-        });
-    });
-
-    // --- 8. HITUNG TOTAL HARGA ---
-    function calculateTotal() {
-        // Harga Dasar
-        let total = parseInt(currentBasecamp.price || 0);
-        let detailsText = [`Tiket Masuk: Rp ${total.toLocaleString()}`];
-
-        // Tambah Addons
-        const checkboxes = document.querySelectorAll('.addon-checkbox:checked');
-        selectedAddons = []; // Reset
-        checkboxes.forEach(box => {
-            const price = parseInt(box.dataset.price);
-            const name = box.dataset.name;
-            total += price;
-            selectedAddons.push({ name, price });
-            detailsText.push(`${name}: Rp ${price.toLocaleString()}`);
-        });
-
-        // Update UI Total
-        const totalEl = document.getElementById('total-price-display'); // Buat elemen ini di HTML jika belum ada
-        if (totalEl) totalEl.innerText = `Rp ${total.toLocaleString('id-ID')}`;
-
-        // Simpan total global
-        totalPrice = total;
-        return detailsText;
+    function renderTimeOptions(data) {
+        const containers = [document.getElementById('climb-time-options'), document.getElementById('simple-climb-time-options')];
+        const sections = [document.getElementById('climb-time-section'), document.getElementById('simple-climb-time-section')];
+        
+        if (data.climb_times && data.climb_times.length > 0) {
+            const html = data.climb_times.map((t, i) => 
+                `<input type="radio" id="t-${t}" name="time" value="${t}" ${i===0?'checked':''}><label for="t-${t}">${t}</label>`
+            ).join('');
+            
+            containers.forEach(c => { if(c) c.innerHTML = html; });
+            sections.forEach(s => { if(s) s.style.display = 'block'; });
+        } else {
+            sections.forEach(s => { if(s) s.style.display = 'none'; });
+        }
     }
 
-    // --- 9. TOMBOL BOOKING (PESAN) ---
-    const bookBtns = document.querySelectorAll('.btn-book, #tombol-pesan-bawah');
+    // --- EVENT LISTENERS LAINNYA ---
+    if(simplePaxInput) simplePaxInput.addEventListener('input', calculateTotals);
+    if(paxCountInput) paxCountInput.addEventListener('input', calculateTotals);
 
+    function showPanel(panel) {
+        [bookingChoicePanel, simpleBookingPanel, advancedBookingPanel].forEach(p => { if(p) p.classList.add('hidden'); });
+        if(panel) panel.classList.remove('hidden');
+        calculateTotals(); // Hitung ulang harga saat ganti panel
+    }
+    if(choiceTiketSajaBtn) choiceTiketSajaBtn.addEventListener('click', () => showPanel(simpleBookingPanel));
+    if(choicePaketLengkapBtn) choicePaketLengkapBtn.addEventListener('click', () => showPanel(advancedBookingPanel));
+    backBtns.forEach(btn => btn.addEventListener('click', () => showPanel(bookingChoicePanel)));
+
+    // Tombol Download Peta
+    const downloadMapBtn = document.getElementById('download-map-btn');
+    if (downloadMapBtn) {
+        downloadMapBtn.addEventListener('click', () => {
+            if (validateUserAccess('Download Peta Offline')) {
+                downloadMapBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ...';
+                downloadMapBtn.disabled = true;
+                setTimeout(() => {
+                    downloadMapBtn.innerHTML = '<i class="fa-solid fa-check"></i> Tersimpan';
+                    downloadMapBtn.style.background = '#16a34a';
+                    alert('Peta berhasil diunduh!');
+                }, 1500);
+            }
+        });
+    }
+
+    // LOGIKA KIRIM PESANAN KE BACKEND (Tombol Desktop/Utama)
+    const bookBtns = [document.getElementById('book-now-btn'), document.getElementById('book-ticket-btn')];
+    
     bookBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            // 1. Cek Login
-            if (!validateUserAccess('Booking Tiket')) return;
+        if (!btn) return;
 
-            // 2. Siapkan Data Pesanan
-            const orderSummary = {
-                mountainId: currentMountain.id,
-                mountainName: currentMountain.mountain_name,
-                basecampName: currentBasecamp.name,
-                basecampId: currentBasecamp.id,
-                date: new Date().toISOString().split('T')[0], // Tanggal hari ini
-                items: selectedAddons,
-                totalPrice: totalPrice,
-                image: currentBasecamp.image
+        btn.addEventListener('click', async (e) => {
+            if (!validateUserAccess('Booking')) return;
+
+            // 1. Siapkan Data Pesanan
+            const userEmail = localStorage.getItem('userEmail');
+            let finalPrice = 0;
+            let dateInfo = '';
+
+            const isAdvanced = !document.getElementById('advanced-booking-panel').classList.contains('hidden');
+
+            if (isAdvanced) {
+                const priceText = document.getElementById('total-price-display').textContent;
+                finalPrice = parseInt(priceText.replace(/[^0-9]/g, ''));
+                dateInfo = document.getElementById('start-date').value;
+            } else {
+                const priceText = document.getElementById('simple-total-price-display').textContent;
+                finalPrice = parseInt(priceText.replace(/[^0-9]/g, ''));
+                dateInfo = document.getElementById('simple-date').value;
+            }
+
+            if (finalPrice === 0 || !dateInfo) {
+                alert("Mohon lengkapi tanggal dan data pemesanan.");
+                return;
+            }
+
+            const orderData = {
+                userEmail: userEmail,
+                locationName: currentBasecamp ? `${locationData.mountain_name} (${currentBasecamp.name})` : locationData.title,
+                date: dateInfo,
+                totalPrice: finalPrice,
+                imageUrl: currentBasecamp ? currentBasecamp.image : locationData.image
             };
 
-            // 3. Simpan ke LocalStorage
-            localStorage.setItem('tempOrder', JSON.stringify(orderSummary));
+            // 2. Kirim ke Backend (POST)
+            try {
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
+                btn.disabled = true;
 
-            // 4. Konfirmasi & Redirect
-            const konfirmasi = confirm(`Konfirmasi Pesanan:\n\nGunung: ${orderSummary.mountainName}\nJalur: ${orderSummary.basecampName}\nTotal: Rp ${orderSummary.totalPrice.toLocaleString()}\n\nLanjut ke pembayaran?`);
-            
-            if (konfirmasi) {
-                // Redirect ke halaman payment (Pastikan file ini ada)
-                // window.location.href = 'payment.html'; 
-                alert("Simulasi: Mengarahkan ke Payment Gateway...");
+                const response = await fetch('https://outzy-api.onrender.com/api/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(orderData)
+                });
+
+                if (response.ok) {
+                    alert('✅ Pesanan Berhasil! Tiket telah terbit.');
+                    window.location.href = 'pesanan.html';
+                } else {
+                    throw new Error('Gagal memproses pesanan');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Terjadi kesalahan koneksi. Coba lagi.');
+                btn.innerHTML = 'Pesan Sekarang';
+                btn.disabled = false;
             }
         });
     });
 
-    // --- 10. AUTO SCROLL KE FORM BOOKING (Jika klik tombol di header) ---
-    const heroBookBtn = document.querySelector('.hero-book-btn'); // Tombol "Pesan Sekarang" di atas
-    if (heroBookBtn) {
-        heroBookBtn.addEventListener('click', () => {
-            const target = document.getElementById('basecamp-selection-panel');
-            if (target) target.scrollIntoView({ behavior: 'smooth' });
+    // --- PERBAIKAN: LOGIKA TOMBOL MOBILE STICKY ---
+    const mobileBookBtn = document.getElementById('mobile-book-btn');
+    if (mobileBookBtn) {
+        mobileBookBtn.addEventListener('click', () => {
+            // 1. Cek Panel mana yang sedang terbuka (Tiket Saja atau Paket Lengkap?)
+            const advancedPanel = document.getElementById('advanced-booking-panel');
+            const simplePanel = document.getElementById('simple-booking-panel');
+            
+            let targetBtn = null;
+
+            // Jika Panel Paket Lengkap terbuka
+            if (advancedPanel && !advancedPanel.classList.contains('hidden')) {
+                targetBtn = document.getElementById('book-now-btn');
+            } 
+            // Jika Panel Tiket Saja terbuka
+            else if (simplePanel && !simplePanel.classList.contains('hidden')) {
+                targetBtn = document.getElementById('book-ticket-btn');
+            }
+
+            // 2. Eksekusi Aksi
+            if (targetBtn) {
+                // Scroll dulu ke form agar user melihat prosesnya
+                const bookingCard = document.querySelector('.booking-card');
+                if (bookingCard) bookingCard.scrollIntoView({ behavior: 'smooth' });
+
+                // KLIK TOMBOL ASLI SECARA OTOMATIS
+                // Kita beri delay 300ms agar scroll terjadi sedikit dulu
+                setTimeout(() => {
+                    targetBtn.click(); 
+                }, 300);
+            } else {
+                // Jika belum pilih jalur/tipe tiket, scroll ke atas
+                const basecampSelect = document.getElementById('basecamp-selection-panel');
+                if (basecampSelect) {
+                    basecampSelect.scrollIntoView({ behavior: 'smooth' });
+                    alert("Silakan pilih jalur dan tipe tiket terlebih dahulu.");
+                }
+            }
         });
     }
 
+    // Tab Handling
+    document.querySelectorAll('.tab-link').forEach(link => {
+        link.addEventListener('click', () => {
+            document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+            if (currentBasecamp && currentBasecamp.details) {
+                document.getElementById('tab-content-container').innerHTML = currentBasecamp.details[link.dataset.tab];
+            }
+        });
+    });
 });
