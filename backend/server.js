@@ -12,8 +12,7 @@ const guidesData = [
 ];
 
 // --- DATABASE SEMENTARA (MEMORY) ---
-// Catatan: Karena pakai Memory, data akan hilang kalau server restart (gratisan Render sering restart).
-// Untuk skripsi nanti sebaiknya konek ke MongoDB, tapi untuk sekarang ini cukup agar tidak error.
+// Data akan hilang jika server restart, tapi cukup untuk demo skripsi.
 let ordersDatabase = []; 
 
 // --- MIDDLEWARE ---
@@ -37,7 +36,7 @@ app.get('/api/guides', (req, res) => {
     res.json(guidesData);
 });
 
-// 4. API ORDERS (INI FITUR BARU YANG KITA TAMBAHKAN)
+// 4. API ORDERS (INI YANG MENGATASI ERROR 404 ANDA)
 
 // A. Simpan Pesanan Baru (POST)
 app.post('/api/orders', (req, res) => {
@@ -48,22 +47,22 @@ app.post('/api/orders', (req, res) => {
     newOrder.status = 'Menunggu Pembayaran';
     newOrder.createdAt = new Date();
 
-    ordersDatabase.push(newOrder); // Masukkan ke memori server
+    ordersDatabase.push(newOrder); // Simpan ke memori
     
     console.log('✅ Pesanan Masuk:', newOrder);
     res.status(201).json({ message: 'Pesanan berhasil disimpan', orderId: newOrder.id });
 });
 
-// B. Lihat Riwayat Pesanan (GET) -> INI YANG MENGATASI ERROR 404
+// B. Lihat Riwayat Pesanan (GET) -> INI TUJUANNYA
 app.get('/api/orders', (req, res) => {
     const emailUser = req.query.email;
 
     if (emailUser) {
-        // Kalau ada email, cari pesanan milik email itu saja
+        // Cari pesanan milik email tersebut
         const myOrders = ordersDatabase.filter(order => order.email === emailUser);
         res.json(myOrders);
     } else {
-        // Kalau tidak ada email, tampilkan semua (untuk admin misalnya)
+        // Kalau tidak ada email, tampilkan semua
         res.json(ordersDatabase);
     }
 });
