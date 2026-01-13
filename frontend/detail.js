@@ -1,29 +1,23 @@
 document.addEventListener('DOMContentLoaded', async () => {
 
     // --- 1. KONFIGURASI SERVER ---
-    // Gunakan Link Render agar Vercel bisa mengambil data (Fix CORS)
-    const API_BASE_URL = 'https://outzy-api.onrender.com';
-    // const API_BASE_URL = 'http://localhost:3000'; // Gunakan ini HANYA jika tes di laptop tanpa Vercel
+    const API_BASE_URL = 'https://outzy-api.onrender.com'; // Server Online
+    // const API_BASE_URL = 'http://localhost:3000'; // Server Laptop
 
-    // --- 2. STATE (VARIABEL GLOBAL) ---
-    let allLocations = [];
-    let allGuides = [];
-    let currentMountain = null;
-    let currentBasecamp = null;
-    let selectedAddons = [];
-    let selectedGuides = [];
+    // --- 2. STATE GLOBAL ---
+    let allLocations = [], allGuides = [];
+    let currentMountain = null, currentBasecamp = null;
+    let selectedAddons = [], selectedGuides = []; // Array untuk simpan pilihan
+    let bookingType = 'simple'; // 'simple' (Tiket Saja) atau 'advanced' (Paket Lengkap)
     let totalPrice = 0;
 
-    // --- 3. CEK LOGIN (NAVIGASI) ---
-    function checkLoginStatus() {
-        const isLoggedIn = localStorage.getItem('isLoggedIn');
-        const mobileAccountLink = document.querySelector('.bottom-nav a[href*="login.html"], .bottom-nav a[href*="akun.html"]');
-        if (isLoggedIn === 'true' && mobileAccountLink) {
-            mobileAccountLink.href = 'akun.html';
-            mobileAccountLink.innerHTML = '<i class="fa-solid fa-user"></i> Akun';
-        }
+    // --- 3. CEK LOGIN ---
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    const mobileAccountLink = document.querySelector('.bottom-nav a[href*="login.html"], .bottom-nav a[href*="akun.html"]');
+    if (isLoggedIn === 'true' && mobileAccountLink) {
+        mobileAccountLink.href = 'akun.html';
+        mobileAccountLink.innerHTML = '<i class="fa-solid fa-user"></i> Akun';
     }
-    checkLoginStatus();
 
     // --- 4. AMBIL ID DARI URL ---
     const params = new URLSearchParams(window.location.search);
@@ -34,303 +28,315 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // --- 5. FETCH DATA DARI SERVER ---
+    // --- 5. FETCH DATA ---
     try {
-        // A. Ambil Data Gunung (Locations)
-        const locResponse = await fetch(`${API_BASE_URL}/api/locations`);
-        if (!locResponse.ok) throw new Error('Gagal mengambil data lokasi');
-        allLocations = await locResponse.json();
+        const [locRes, guideRes] = await Promise.all([
+            fetch(`${API_BASE_URL}/api/locations`),
+            fetch(`${API_BASE_URL}/api/guides`)
+        ]);
 
-        // B. Ambil Data Guide (Pemandu)
-        // Kita gunakan try-catch agar jika server guide error, halaman tetap jalan
-        try {
-            const guideResponse = await fetch(`${API_BASE_URL}/api/guides`);
-            if (guideResponse.ok) {
-                allGuides = await guideResponse.json();
-            }
-        } catch (err) {
-            console.warn("Info: Data guide belum tersedia/error.");
-        }
-
-        // C. Cari Gunung Sesuai ID
-        currentMountain = allLocations.find(item => item.id === id);
+        if (!locRes.ok) throw new Error('Gagal mengambil data lokasi');
+        allLocations = await locRes.json();
         
-        if (!currentMountain) {
-            throw new Error('Gunung tidak ditemukan di database.');
-        }
+        if (guideRes.ok) allGuides = await guideRes.json();
 
-        // D. Set Basecamp Default (Pilih yang pertama)
-        if (currentMountain.basecamps && currentMountain.basecamps.length > 0) {
+        currentMountain = allLocations.find(item => item.id === id);
+        if (!currentMountain) throw new Error('Gunung tidak ditemukan.');
+
+        // Default Basecamp
+        if (currentMountain.basecamps?.length > 0) {
             currentBasecamp = currentMountain.basecamps[0];
         }
 
-        // E. Render Halaman
         renderPage();
 
     } catch (error) {
-        console.error("Critical Error:", error);
-        document.querySelector('main').innerHTML = `
-            <div style="text-align:center; padding: 4rem; font-family: sans-serif;">
-                <h2>Gagal Memuat Data 😔</h2>
-                <p>${error.message}</p>
-                <p style="font-size:0.9rem; color:#666;">Pastikan server backend berjalan.</p>
-                <a href="index.html" style="color: blue; text-decoration: underline;">Kembali ke Beranda</a>
-            </div>
-        `;
+        console.error(error);
+        document.querySelector('main').innerHTML = `<h2 style="text-align:center; margin-top:50px;">Gagal memuat data: ${error.message}</h2>`;
     }
 
-    // --- 6. RENDER TAMPILAN UTAMA ---
+    // --- 6. RENDER HALAMAN UTAMA ---
     function renderPage() {
-        // Isi Judul & Lokasi
-        const titleEl = document.getElementById('nama-gunung');
-        const locEl = document.getElementById('lokasi-gunung');
-        
-        if (titleEl) titleEl.innerText = currentMountain.mountain_name;
-        if (locEl) locEl.innerText = currentMountain.location;
+        document.getElementById('nama-gunung').innerText = currentMountain.mountain_name;
+        document.getElementById('lokasi-gunung').innerText = currentMountain.location;
 
-        // Render Dropdown Pilihan Jalur
-        renderBasecampSelector();
-
-        // Update UI sisanya
-        updateBasecampUI();
+        renderBasecampSelector(); // Dropdown Jalur
+        updateBasecampUI();       // Update Tampilan Awal
+        renderBookingSection();   // INI FITUR BARU: Tipe Pemesanan & Addons
     }
 
-    // --- 7. RENDER DROPDOWN JALUR ---
+    // --- 7. LOGIKA JALUR PENDAKIAN ---
     function renderBasecampSelector() {
         const container = document.getElementById('basecamp-selection-panel');
-        
-        // Sembunyikan jika tidak ada basecamp
-        if (!currentMountain.basecamps || currentMountain.basecamps.length === 0) {
-            if(container) container.style.display = 'none';
-            return;
-        }
+        if (!container || !currentMountain.basecamps) return;
 
-        if (container) {
-            let html = `<label style="font-weight:bold; display:block; margin-bottom:8px; color:#333;">Pilih Jalur Pendakian:</label>
-                        <select id="basecamp-select" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; margin-bottom:15px; font-size:16px;">`;
-            
-            currentMountain.basecamps.forEach((bc, index) => {
-                html += `<option value="${index}">Via ${bc.name}</option>`;
-            });
-            html += `</select>`;
-            container.innerHTML = html;
+        let html = `<label style="font-weight:bold; display:block; margin-bottom:8px;">Pilih Jalur Pendakian:</label>
+                    <select id="basecamp-select" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ddd; margin-bottom:15px;">`;
+        currentMountain.basecamps.forEach((bc, index) => {
+            html += `<option value="${index}">Via ${bc.name}</option>`;
+        });
+        html += `</select>`;
+        container.innerHTML = html;
 
-            // Event Listener: Saat ganti jalur
-            document.getElementById('basecamp-select').addEventListener('change', (e) => {
-                const idx = e.target.value;
-                currentBasecamp = currentMountain.basecamps[idx];
-                
-                // Reset pilihan saat ganti jalur
-                selectedAddons = []; 
-                selectedGuides = [];
-                
-                updateBasecampUI();
-            });
-        }
+        document.getElementById('basecamp-select').addEventListener('change', (e) => {
+            currentBasecamp = currentMountain.basecamps[e.target.value];
+            // Reset pilihan saat ganti jalur
+            selectedAddons = []; selectedGuides = [];
+            renderBookingSection(); // Render ulang form booking
+            updateBasecampUI();
+        });
     }
 
-    // --- 8. UPDATE UI (SAAT JALUR BERUBAH) ---
     function updateBasecampUI() {
         if (!currentBasecamp) return;
-
-        // Update Gambar Utama
         const mainImg = document.getElementById('gambar-utama');
         if (mainImg) mainImg.src = currentBasecamp.image;
-
-        // Update Rating
-        const ratingEl = document.querySelector('.rating span');
-        if (ratingEl) ratingEl.innerText = currentBasecamp.rating || '4.8';
-
-        // Update Tab (Deskripsi/Info)
+        
+        // Update Tab
         const activeTab = document.querySelector('.tab-link.active');
-        if (activeTab) renderTabContent(activeTab.dataset.tab);
-
-        // Render Ulang List Alat & Guide
-        renderAddons(); 
-        renderGuides(); 
-
-        // Hitung Ulang Harga
+        if (activeTab && currentBasecamp.details) {
+            const container = document.getElementById('tab-content-container') || document.getElementById('deskripsi-lengkap');
+            container.innerHTML = currentBasecamp.details[activeTab.dataset.tab] || '';
+        }
         calculateTotal();
     }
 
-    // --- 9. RENDER ADD-ONS (SEWA ALAT) ---
-    function renderAddons() {
-        const container = document.getElementById('addons-container');
-        if (!container) return; 
-
-        let html = `<div style="margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
-                    <h4 style="margin-bottom:10px; font-size:16px;">Sewa Alat (Opsional)</h4>`;
-
-        if (currentBasecamp.addons && currentBasecamp.addons.length > 0) {
-            currentBasecamp.addons.forEach((addon) => {
-                html += `
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
-                    <label style="cursor:pointer; display:flex; align-items:center;">
-                        <input type="checkbox" class="addon-checkbox" data-price="${addon.price}" data-name="${addon.name}" style="margin-right:10px; transform:scale(1.2);"> 
-                        ${addon.name}
-                    </label>
-                    <span style="font-weight:bold; color:#27ae60;">+Rp ${parseInt(addon.price).toLocaleString('id-ID')}</span>
-                </div>`;
-            });
-        } else {
-            html += `<p style="color:#777; font-size: 0.9rem;">Tidak ada alat sewa di jalur ini.</p>`;
-        }
-        html += `</div>`;
-        container.innerHTML = html;
-
-        // Pasang Event Listener
-        container.querySelectorAll('.addon-checkbox').forEach(box => {
-            box.addEventListener('change', calculateTotal);
-        });
-    }
-
-    // --- 10. RENDER GUIDES (PEMANDU) ---
-    function renderGuides() {
-        // Cari container, jika tidak ada buat baru di bawah addons
-        let container = document.getElementById('guides-container');
-        if (!container) {
-            const addonsContainer = document.getElementById('addons-container');
-            if (addonsContainer) {
-                container = document.createElement('div');
-                container.id = 'guides-container';
-                addonsContainer.parentNode.insertBefore(container, addonsContainer.nextSibling);
-            } else {
-                return;
-            }
-        }
-
-        let html = `<div style="margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
-                    <h4 style="margin-bottom:10px; font-size:16px;">Pemandu (Opsional)</h4>`;
-
-        // Cek data guide
-        if (currentBasecamp.guides && currentBasecamp.guides.length > 0 && allGuides.length > 0) {
+    // --- 8. LOGIKA BOOKING TYPE & ADDONS (YANG HILANG) ---
+    function renderBookingSection() {
+        // Cari container tempat menaruh form. 
+        // Kita cari elemen setelah deskripsi atau buat container baru jika belum ada.
+        let bookingContainer = document.getElementById('booking-ui-container');
+        
+        if (!bookingContainer) {
+            // Jika tidak ada di HTML, kita buat otomatis di bawah Tabs
+            const tabs = document.querySelector('.tabs-container') || document.getElementById('deskripsi-lengkap');
+            bookingContainer = document.createElement('div');
+            bookingContainer.id = 'booking-ui-container';
+            bookingContainer.style.marginTop = '20px';
+            bookingContainer.style.padding = '15px';
+            bookingContainer.style.background = '#fff';
+            bookingContainer.style.borderRadius = '12px';
+            bookingContainer.style.boxShadow = '0 2px 10px rgba(0,0,0,0.05)';
             
-            currentBasecamp.guides.forEach(guideId => {
-                // Cocokkan ID
-                const guideData = allGuides.find(g => g.id === guideId);
-                
-                if (guideData) {
-                    html += `
-                    <div style="display:flex; align-items:center; margin-bottom:15px; border:1px solid #f0f0f0; padding:10px; border-radius:8px;">
-                        <input type="checkbox" class="guide-checkbox" value="${guideData.id}" data-price="${guideData.price}" data-name="${guideData.name}" style="margin-right:10px; transform:scale(1.2);">
-                        <img src="${guideData.photo}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; margin-right:10px;" onerror="this.src='aset/default-user.png'">
-                        <div style="flex-grow:1;">
-                            <div style="font-weight:bold;">${guideData.name}</div>
-                            <div style="font-size:0.8rem; color:#666;">⭐ ${guideData.rating} • ${guideData.skills.join(', ')}</div>
-                        </div>
-                        <div style="font-weight:bold; color:#e67e22;">Rp ${parseInt(guideData.price).toLocaleString('id-ID')}</div>
-                    </div>`;
-                }
-            });
-        } else {
-            html += `<p style="color:#777; font-size: 0.9rem;">Tidak ada pemandu tersedia.</p>`;
+            if(tabs) tabs.parentNode.insertBefore(bookingContainer, tabs.nextSibling);
         }
-        
-        html += `</div>`;
-        container.innerHTML = html;
 
-        // Pasang Event Listener
-        container.querySelectorAll('.guide-checkbox').forEach(box => {
+        // HTML untuk Pilihan Tipe
+        bookingContainer.innerHTML = `
+            <h3 style="margin-bottom:15px; font-size:1.1rem;">Pilih Tipe Pemesanan</h3>
+            
+            <div style="display:flex; gap:10px; margin-bottom:20px;">
+                <button id="btn-simple" class="type-btn active" style="flex:1; padding:10px; border:1px solid #007bff; background:#007bff; color:white; border-radius:8px; cursor:pointer;">
+                    🎫 Tiket Masuk
+                </button>
+                <button id="btn-advanced" class="type-btn" style="flex:1; padding:10px; border:1px solid #ddd; background:white; color:#333; border-radius:8px; cursor:pointer;">
+                    🎒 Paket Lengkap
+                </button>
+            </div>
+
+            <div id="booking-form-content">
+                <label style="display:block; margin-bottom:5px; font-size:0.9rem;">Tanggal Pendakian</label>
+                <input type="date" id="input-date" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px;">
+
+                <label style="display:block; margin-bottom:5px; font-size:0.9rem;">Jumlah Orang (Pax)</label>
+                <input type="number" id="input-pax" value="1" min="1" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px;">
+
+                <div id="advanced-options" style="display:none; border-top:1px solid #eee; padding-top:15px;">
+                    <h4 style="font-size:1rem; margin-bottom:10px;">Tambahan (Add-ons)</h4>
+                    <div id="addons-list"></div>
+                    
+                    <h4 style="font-size:1rem; margin:15px 0 10px;">Pemandu (Guide)</h4>
+                    <div id="guides-list"></div>
+                </div>
+            </div>
+        `;
+
+        // Render List Addons & Guides
+        renderAddonItems();
+        renderGuideItems();
+
+        // Event Listener Tombol Tipe
+        const btnSimple = document.getElementById('btn-simple');
+        const btnAdvanced = document.getElementById('btn-advanced');
+        const advancedOptions = document.getElementById('advanced-options');
+
+        btnSimple.addEventListener('click', () => {
+            bookingType = 'simple';
+            toggleTypeBtn(btnSimple, btnAdvanced);
+            advancedOptions.style.display = 'none';
+            selectedAddons = []; selectedGuides = []; // Reset pilihan tambahan
+            uncheckAllBoxes();
+            calculateTotal();
+        });
+
+        btnAdvanced.addEventListener('click', () => {
+            bookingType = 'advanced';
+            toggleTypeBtn(btnAdvanced, btnSimple);
+            advancedOptions.style.display = 'block';
+            calculateTotal();
+        });
+
+        // Event Listener Input
+        document.getElementById('input-pax').addEventListener('input', calculateTotal);
+    }
+
+    function toggleTypeBtn(activeBtn, inactiveBtn) {
+        activeBtn.style.background = '#007bff';
+        activeBtn.style.color = 'white';
+        activeBtn.style.borderColor = '#007bff';
+        
+        inactiveBtn.style.background = 'white';
+        inactiveBtn.style.color = '#333';
+        inactiveBtn.style.borderColor = '#ddd';
+    }
+
+    function renderAddonItems() {
+        const container = document.getElementById('addons-list');
+        if (!currentBasecamp.addons || currentBasecamp.addons.length === 0) {
+            container.innerHTML = '<p style="color:#888; font-size:0.9rem;">Tidak ada alat sewa.</p>';
+            return;
+        }
+
+        container.innerHTML = currentBasecamp.addons.map(addon => `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <label style="display:flex; align-items:center; cursor:pointer;">
+                    <input type="checkbox" class="addon-check" value="${addon.name}" data-price="${addon.price}" style="margin-right:8px;">
+                    ${addon.name}
+                </label>
+                <span style="color:#27ae60; font-size:0.9rem;">+Rp ${parseInt(addon.price).toLocaleString()}</span>
+            </div>
+        `).join('');
+        
+        // Listen changes
+        container.querySelectorAll('.addon-check').forEach(box => {
             box.addEventListener('change', calculateTotal);
         });
     }
 
-    // --- 11. SISTEM TAB ---
-    function renderTabContent(key) {
-        const container = document.getElementById('tab-content-container') || document.getElementById('deskripsi-lengkap');
-        if (container && currentBasecamp.details) {
-            container.innerHTML = currentBasecamp.details[key] || '<p>Info tidak tersedia.</p>';
+    function renderGuideItems() {
+        const container = document.getElementById('guides-list');
+        // Filter guide yang tersedia di basecamp ini
+        const availableGuides = currentBasecamp.guides 
+            ? currentBasecamp.guides.map(id => allGuides.find(g => g.id === id)).filter(Boolean)
+            : [];
+
+        if (availableGuides.length === 0) {
+            container.innerHTML = '<p style="color:#888; font-size:0.9rem;">Tidak ada guide tersedia.</p>';
+            return;
         }
+
+        container.innerHTML = availableGuides.map(guide => `
+            <div style="display:flex; align-items:center; margin-bottom:10px; border:1px solid #f0f0f0; padding:8px; border-radius:8px;">
+                <input type="checkbox" class="guide-check" value="${guide.name}" data-price="${guide.price}" style="margin-right:10px;">
+                <img src="${guide.photo}" style="width:35px; height:35px; border-radius:50%; object-fit:cover; margin-right:10px;" onerror="this.src='aset/default-user.png'">
+                <div style="flex:1;">
+                    <div style="font-weight:bold; font-size:0.9rem;">${guide.name}</div>
+                    <div style="font-size:0.8rem; color:#666;">⭐ ${guide.rating}</div>
+                </div>
+                <div style="font-weight:bold; color:#e67e22; font-size:0.9rem;">Rp ${parseInt(guide.price).toLocaleString()}</div>
+            </div>
+        `).join('');
+
+        // Listen changes
+        container.querySelectorAll('.guide-check').forEach(box => {
+            box.addEventListener('change', calculateTotal);
+        });
     }
 
-    document.querySelectorAll('.tab-link').forEach(link => {
-        link.addEventListener('click', function() {
-            document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
-            this.classList.add('active');
-            renderTabContent(this.dataset.tab);
-        });
-    });
+    function uncheckAllBoxes() {
+        document.querySelectorAll('.addon-check, .guide-check').forEach(box => box.checked = false);
+    }
 
-    // --- 12. HITUNG TOTAL HARGA ---
+    // --- 9. HITUNG TOTAL HARGA ---
     function calculateTotal() {
-        let ticketPrice = parseInt(currentBasecamp.price || 0);
-        let total = ticketPrice;
+        if (!currentBasecamp) return;
 
-        // Hitung Addons
-        selectedAddons = [];
-        document.querySelectorAll('.addon-checkbox:checked').forEach(box => {
-            const price = parseInt(box.dataset.price);
-            total += price;
-            selectedAddons.push({ name: box.dataset.name, price: price });
-        });
-
-        // Hitung Guide
-        selectedGuides = [];
-        document.querySelectorAll('.guide-checkbox:checked').forEach(box => {
-            const price = parseInt(box.dataset.price);
-            total += price;
-            selectedGuides.push({ name: box.dataset.name, price: price });
-        });
-
-        // Update UI Harga
-        const priceEl = document.getElementById('harga-tiket');
-        if (priceEl) priceEl.innerText = `Rp ${ticketPrice.toLocaleString('id-ID')}`;
-
-        const totalEl = document.getElementById('total-price-display');
-        if (totalEl) totalEl.innerText = `Rp ${total.toLocaleString('id-ID')}`;
+        const paxInput = document.getElementById('input-pax');
+        const pax = parseInt(paxInput ? paxInput.value : 1) || 1;
+        const ticketPrice = parseInt(currentBasecamp.price);
         
-        const mobileTotalEl = document.getElementById('mobile-price-display');
-        if (mobileTotalEl) mobileTotalEl.innerText = `Rp ${total.toLocaleString('id-ID')}`;
+        let total = ticketPrice * pax; // Harga Dasar x Jumlah Orang
 
+        // Tambah Addons (Jika Advanced)
+        selectedAddons = [];
+        if (bookingType === 'advanced') {
+            document.querySelectorAll('.addon-check:checked').forEach(box => {
+                const price = parseInt(box.dataset.price);
+                total += price; // Harga alat biasanya per unit, bisa dikali hari jika mau kompleks
+                selectedAddons.push({ name: box.value, price: price });
+            });
+
+            // Tambah Guides
+            selectedGuides = [];
+            document.querySelectorAll('.guide-check:checked').forEach(box => {
+                const price = parseInt(box.dataset.price);
+                total += price;
+                selectedGuides.push({ name: box.value, price: price });
+            });
+        }
+
+        // Update UI
+        const priceEl = document.getElementById('harga-tiket');
+        if(priceEl) priceEl.innerText = `Rp ${ticketPrice.toLocaleString('id-ID')} / pax`;
+
+        const totalDisplays = document.querySelectorAll('#total-price-display, #mobile-price-display');
+        totalDisplays.forEach(el => el.innerText = `Rp ${total.toLocaleString('id-ID')}`);
+        
         totalPrice = total;
     }
 
-    // --- 13. TOMBOL BOOKING ---
+    // --- 10. TOMBOL BOOKING ---
     const bookBtns = document.querySelectorAll('.btn-book, #tombol-pesan-bawah, #book-now-btn, #mobile-book-btn');
-
     bookBtns.forEach(btn => {
-        btn.addEventListener('click', async () => {
-            // Cek Login
-            const isLoggedIn = localStorage.getItem('isLoggedIn');
+        btn.addEventListener('click', () => {
             if (isLoggedIn !== 'true') {
-                if(confirm("Fitur Booking hanya untuk Member. Login sekarang?")) {
-                    window.location.href = 'login.html';
-                }
+                if(confirm("Silakan login untuk memesan.")) window.location.href = 'login.html';
                 return;
             }
 
-            if (!currentBasecamp) {
-                alert("Data jalur belum dimuat.");
+            const dateInput = document.getElementById('input-date');
+            if (!dateInput || !dateInput.value) {
+                alert("Mohon pilih tanggal pendakian.");
+                dateInput?.focus();
                 return;
             }
 
-            // Data Pesanan
             const orderData = {
                 mountainId: currentMountain.id,
                 mountainName: currentMountain.mountain_name,
                 basecampName: currentBasecamp.name,
-                basecampId: currentBasecamp.id,
-                date: new Date().toISOString().split('T')[0],
+                date: dateInput.value,
+                pax: document.getElementById('input-pax').value,
                 items: [...selectedAddons, ...selectedGuides],
                 totalPrice: totalPrice,
-                image: currentBasecamp.image
+                image: currentBasecamp.image,
+                type: bookingType === 'simple' ? 'Tiket Masuk' : 'Paket Lengkap'
             };
 
-            // Simpan ke LocalStorage
             localStorage.setItem('tempOrder', JSON.stringify(orderData));
-
-            // Efek Loading
+            
+            // Animasi Loading
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ...';
             btn.disabled = true;
 
             setTimeout(() => {
-                alert(`Pesanan Berhasil!\nTotal: Rp ${totalPrice.toLocaleString('id-ID')}\n\nSilakan cek halaman Pesanan.`);
-                // window.location.href = 'pesanan.html'; // Uncomment jika sudah ada file pesanan.html
+                alert(`Pesanan Berhasil!\n\nTipe: ${orderData.type}\nTotal: Rp ${totalPrice.toLocaleString('id-ID')}\n\nSilakan cek halaman pesanan.`);
                 window.location.reload(); 
                 btn.innerHTML = originalText;
                 btn.disabled = false;
-            }, 1500);
+            }, 1000);
+        });
+    });
+
+    // Tab Handling (Tambahan)
+    document.querySelectorAll('.tab-link').forEach(link => {
+        link.addEventListener('click', () => {
+            document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+            if (currentBasecamp && currentBasecamp.details) {
+                document.getElementById('tab-content-container').innerHTML = currentBasecamp.details[link.dataset.tab];
+            }
         });
     });
 });
