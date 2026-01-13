@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', async () => {
 
     // --- 1. KONFIGURASI SERVER ---
-    // Gunakan Link Render agar Vercel bisa mengambil data tanpa diblokir
-    // const API_BASE_URL = 'http://localhost:3000'; // <-- Mode Laptop (Localhost)
-    const API_BASE_URL = 'https://outzy-api.onrender.com'; // <-- Mode Online (Vercel)
+    // Gunakan Link Render agar Vercel bisa mengambil data (Fix CORS)
+    const API_BASE_URL = 'https://outzy-api.onrender.com';
+    // const API_BASE_URL = 'http://localhost:3000'; // Gunakan ini HANYA jika tes di laptop tanpa Vercel
 
     // --- 2. STATE (VARIABEL GLOBAL) ---
     let allLocations = [];
@@ -36,19 +36,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // --- 5. FETCH DATA DARI SERVER ---
     try {
-        // A. Ambil Data Gunung
+        // A. Ambil Data Gunung (Locations)
         const locResponse = await fetch(`${API_BASE_URL}/api/locations`);
         if (!locResponse.ok) throw new Error('Gagal mengambil data lokasi');
         allLocations = await locResponse.json();
 
-        // B. Ambil Data Guide (Opsional)
+        // B. Ambil Data Guide (Pemandu)
+        // Kita gunakan try-catch agar jika server guide error, halaman tetap jalan
         try {
             const guideResponse = await fetch(`${API_BASE_URL}/api/guides`);
             if (guideResponse.ok) {
                 allGuides = await guideResponse.json();
             }
         } catch (err) {
-            console.warn("Info: Data guide belum tersedia.");
+            console.warn("Info: Data guide belum tersedia/error.");
         }
 
         // C. Cari Gunung Sesuai ID
@@ -72,6 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div style="text-align:center; padding: 4rem; font-family: sans-serif;">
                 <h2>Gagal Memuat Data 😔</h2>
                 <p>${error.message}</p>
+                <p style="font-size:0.9rem; color:#666;">Pastikan server backend berjalan.</p>
                 <a href="index.html" style="color: blue; text-decoration: underline;">Kembali ke Beranda</a>
             </div>
         `;
@@ -97,6 +99,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderBasecampSelector() {
         const container = document.getElementById('basecamp-selection-panel');
         
+        // Sembunyikan jika tidak ada basecamp
         if (!currentMountain.basecamps || currentMountain.basecamps.length === 0) {
             if(container) container.style.display = 'none';
             return;
@@ -117,7 +120,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const idx = e.target.value;
                 currentBasecamp = currentMountain.basecamps[idx];
                 
-                // Reset pilihan alat & guide
+                // Reset pilihan saat ganti jalur
                 selectedAddons = []; 
                 selectedGuides = [];
                 
@@ -153,7 +156,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // --- 9. RENDER ADD-ONS (SEWA ALAT) ---
     function renderAddons() {
         const container = document.getElementById('addons-container');
-        if (!container) return; // Skip jika elemen tidak ada di HTML
+        if (!container) return; 
 
         let html = `<div style="margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
                     <h4 style="margin-bottom:10px; font-size:16px;">Sewa Alat (Opsional)</h4>`;
@@ -183,8 +186,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // --- 10. RENDER GUIDES (PEMANDU) ---
     function renderGuides() {
+        // Cari container, jika tidak ada buat baru di bawah addons
         let container = document.getElementById('guides-container');
-        // Buat container guide otomatis jika belum ada
         if (!container) {
             const addonsContainer = document.getElementById('addons-container');
             if (addonsContainer) {
@@ -199,9 +202,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         let html = `<div style="margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
                     <h4 style="margin-bottom:10px; font-size:16px;">Pemandu (Opsional)</h4>`;
 
+        // Cek data guide
         if (currentBasecamp.guides && currentBasecamp.guides.length > 0 && allGuides.length > 0) {
+            
             currentBasecamp.guides.forEach(guideId => {
+                // Cocokkan ID
                 const guideData = allGuides.find(g => g.id === guideId);
+                
                 if (guideData) {
                     html += `
                     <div style="display:flex; align-items:center; margin-bottom:15px; border:1px solid #f0f0f0; padding:10px; border-radius:8px;">
@@ -222,6 +229,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         html += `</div>`;
         container.innerHTML = html;
 
+        // Pasang Event Listener
         container.querySelectorAll('.guide-checkbox').forEach(box => {
             box.addEventListener('change', calculateTotal);
         });
@@ -248,6 +256,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         let ticketPrice = parseInt(currentBasecamp.price || 0);
         let total = ticketPrice;
 
+        // Hitung Addons
         selectedAddons = [];
         document.querySelectorAll('.addon-checkbox:checked').forEach(box => {
             const price = parseInt(box.dataset.price);
@@ -255,6 +264,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             selectedAddons.push({ name: box.dataset.name, price: price });
         });
 
+        // Hitung Guide
         selectedGuides = [];
         document.querySelectorAll('.guide-checkbox:checked').forEach(box => {
             const price = parseInt(box.dataset.price);
@@ -262,15 +272,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             selectedGuides.push({ name: box.dataset.name, price: price });
         });
 
-        // Update Harga Tiket (Atas)
+        // Update UI Harga
         const priceEl = document.getElementById('harga-tiket');
         if (priceEl) priceEl.innerText = `Rp ${ticketPrice.toLocaleString('id-ID')}`;
 
-        // Update Total (Bawah)
         const totalEl = document.getElementById('total-price-display');
         if (totalEl) totalEl.innerText = `Rp ${total.toLocaleString('id-ID')}`;
         
-        // Update Mobile Sticky
         const mobileTotalEl = document.getElementById('mobile-price-display');
         if (mobileTotalEl) mobileTotalEl.innerText = `Rp ${total.toLocaleString('id-ID')}`;
 
@@ -282,6 +290,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     bookBtns.forEach(btn => {
         btn.addEventListener('click', async () => {
+            // Cek Login
             const isLoggedIn = localStorage.getItem('isLoggedIn');
             if (isLoggedIn !== 'true') {
                 if(confirm("Fitur Booking hanya untuk Member. Login sekarang?")) {
@@ -295,6 +304,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
+            // Data Pesanan
             const orderData = {
                 mountainId: currentMountain.id,
                 mountainName: currentMountain.mountain_name,
@@ -306,20 +316,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                 image: currentBasecamp.image
             };
 
+            // Simpan ke LocalStorage
             localStorage.setItem('tempOrder', JSON.stringify(orderData));
 
+            // Efek Loading
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
             btn.disabled = true;
 
             setTimeout(() => {
                 alert(`Pesanan Berhasil!\nTotal: Rp ${totalPrice.toLocaleString('id-ID')}\n\nSilakan cek halaman Pesanan.`);
-                // window.location.href = 'pesanan.html'; // Aktifkan jika sudah ada filenya
+                // window.location.href = 'pesanan.html'; // Uncomment jika sudah ada file pesanan.html
                 window.location.reload(); 
                 btn.innerHTML = originalText;
                 btn.disabled = false;
-            }, 1000);
+            }, 1500);
         });
     });
-
 });
