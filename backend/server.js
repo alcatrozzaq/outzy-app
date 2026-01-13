@@ -1,48 +1,71 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-
-// Gunakan Port dari Render (Cloud), kalau di laptop pakai 3000
 const port = process.env.PORT || 3000;
 
-// --- IMPORT DATABASE ---
-// Pastikan file data.js ada di folder yang sama
+// --- IMPORT DATA GUNUNG ---
 const locationsData = require('./data'); 
 
-// --- ATURAN KONEKSI (MIDDLEWARE) ---
-app.use(cors()); // Izinkan semua koneksi (PENTING untuk Vercel)
-app.use(express.json()); // Supaya bisa baca data JSON
+// --- DATA DUMMY GUIDE (PEMANDU) ---
+// Kita taruh sini langsung agar tidak perlu buat file baru
+const guidesData = [
+    { 
+        id: 'p01', 
+        name: 'Budi Santoso', 
+        age: 30, 
+        rating: 4.9, 
+        price: '150000', 
+        skills: ['Medis', 'Porter', 'Masak'], 
+        photo: 'https://cdn-icons-png.flaticon.com/512/4042/4042356.png' 
+    },
+    { 
+        id: 'p02', 
+        name: 'Siti Aminah', 
+        age: 28, 
+        rating: 4.8, 
+        price: '150000', 
+        skills: ['Bahasa Inggris', 'Fotografi'], 
+        photo: 'https://cdn-icons-png.flaticon.com/512/4042/4042422.png' 
+    }
+];
 
-// --- ROUTES (JALUR API) ---
+// --- MIDDLEWARE ---
+app.use(cors());
+app.use(express.json());
 
-// 1. Cek Kesehatan Server (Root)
-// Buka ini di browser untuk memastikan server hidup
+// --- ROUTES ---
+
+// 1. Cek Server
 app.get('/', (req, res) => {
-    res.send('<h1>Server Outzy Berjalan Lancar! 🚀</h1><p>Silakan akses /api/locations untuk data gunung.</p>');
+    res.send('Server Outzy Siap! 🚀');
 });
 
-// 2. Ambil SEMUA Data Gunung
+// 2. API Locations (Gunung)
 app.get('/api/locations', (req, res) => {
-    console.log(`[${new Date().toLocaleTimeString()}] Ada request masuk ke /api/locations`);
     res.json(locationsData);
 });
 
-// 3. Ambil SATU Data Gunung (Berdasarkan ID)
 app.get('/api/locations/:id', (req, res) => {
     const id = parseInt(req.params.id);
     const location = locationsData.find(item => item.id === id);
-
-    if (location) {
-        res.json(location);
-    } else {
-        res.status(404).json({ message: "Gunung tidak ditemukan!" });
-    }
+    if (location) res.json(location);
+    else res.status(404).json({ message: "Gunung tidak ditemukan!" });
 });
 
-// --- MENYALAKAN SERVER ---
+// 3. API Guides (INI YANG TADINYA HILANG)
+app.get('/api/guides', (req, res) => {
+    res.json(guidesData);
+});
+
+// 4. API Orders (Untuk menerima pesanan)
+app.post('/api/orders', (req, res) => {
+    const order = req.body;
+    console.log('Pesanan Baru Diterima:', order);
+    // Di sini nanti bisa disambungkan ke database asli
+    res.status(201).json({ message: 'Pesanan berhasil disimpan', data: order });
+});
+
+// --- START SERVER ---
 app.listen(port, () => {
-    console.log(`=========================================`);
-    console.log(`🚀 Server Outzy SIAP di port ${port}`);
-    console.log(`🔗 Link Lokal: http://localhost:${port}`);
-    console.log(`=========================================`);
+    console.log(`Server Outzy berjalan di port ${port}`);
 });
