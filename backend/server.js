@@ -1,66 +1,48 @@
 const express = require('express');
 const cors = require('cors');
-
-// Impor data
-const { dummyData } = require('./data.js');
-const { allGuides } = require('./guides.js');
-// Kita gunakan let agar array bisa diubah (ditambah pesanan baru)
-let { dummyOrders } = require('./orders.js'); 
-
 const app = express();
+
+// Gunakan Port dari Render (Cloud), kalau di laptop pakai 3000
 const port = process.env.PORT || 3000;
 
-app.use(cors());
-app.use(express.json()); // <--- WAJIB: Agar server bisa baca data yang dikirim Frontend
+// --- IMPORT DATABASE ---
+// Pastikan file data.js ada di folder yang sama
+const locationsData = require('./data'); 
 
-// --- GET DATA ---
+// --- ATURAN KONEKSI (MIDDLEWARE) ---
+app.use(cors()); // Izinkan semua koneksi (PENTING untuk Vercel)
+app.use(express.json()); // Supaya bisa baca data JSON
+
+// --- ROUTES (JALUR API) ---
+
+// 1. Cek Kesehatan Server (Root)
+// Buka ini di browser untuk memastikan server hidup
+app.get('/', (req, res) => {
+    res.send('<h1>Server Outzy Berjalan Lancar! 🚀</h1><p>Silakan akses /api/locations untuk data gunung.</p>');
+});
+
+// 2. Ambil SEMUA Data Gunung
 app.get('/api/locations', (req, res) => {
-  res.json(dummyData);
+    console.log(`[${new Date().toLocaleTimeString()}] Ada request masuk ke /api/locations`);
+    res.json(locationsData);
 });
 
-app.get('/api/guides', (req, res) => {
-    res.json(allGuides);
-});
+// 3. Ambil SATU Data Gunung (Berdasarkan ID)
+app.get('/api/locations/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const location = locationsData.find(item => item.id === id);
 
-// --- API PESANAN (REVISI) ---
-
-// 1. GET Pesanan (Bisa filter by email)
-app.get('/api/orders', (req, res) => {
-    const userEmail = req.query.email;
-    
-    if (userEmail) {
-        // Filter: Hanya tampilkan pesanan milik email tersebut
-        const filteredOrders = dummyOrders.filter(o => o.userEmail === userEmail);
-        res.json(filteredOrders);
+    if (location) {
+        res.json(location);
     } else {
-        // Jika tidak ada email, kirim array kosong (keamanan) atau semua (admin)
-        // Kita kirim kosong agar user tamu tidak melihat pesanan orang lain
-        res.json([]);
+        res.status(404).json({ message: "Gunung tidak ditemukan!" });
     }
 });
 
-// 2. POST Pesanan Baru (Menerima Data dari Frontend)
-app.post('/api/orders', (req, res) => {
-    const newOrder = req.body;
-
-    // Tambahkan data server-side (ID unik, Status awal)
-    const orderWithMeta = {
-        ...newOrder,
-        id: `ORD-${Date.now()}`, // ID Unik berdasarkan waktu
-        status: 'Akan Datang'    // Default status
-    };
-
-    // Simpan ke memori server (Array)
-    dummyOrders.push(orderWithMeta);
-
-    console.log('Pesanan Baru Diterima:', orderWithMeta); // Cek di terminal nanti
-    
-    res.status(201).json({ 
-        message: 'Pesanan berhasil dibuat', 
-        order: orderWithMeta 
-    });
-});
-
+// --- MENYALAKAN SERVER ---
 app.listen(port, () => {
-  console.log(`Server Outzy API berjalan di http://localhost:${port}`);
+    console.log(`=========================================`);
+    console.log(`🚀 Server Outzy SIAP di port ${port}`);
+    console.log(`🔗 Link Lokal: http://localhost:${port}`);
+    console.log(`=========================================`);
 });
