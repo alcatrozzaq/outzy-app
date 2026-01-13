@@ -1,5 +1,5 @@
 const dummyData = [
-    // --- 1. GUNUNG MERBABU ---
+    // 1. MERBABU
     {
         id: 1, 
         mountain_name: 'Gunung Merbabu', 
@@ -25,16 +25,16 @@ const dummyData = [
         ]
     },
 
-    // --- 2. GUNUNG KERINCI ---
+    // 2. KERINCI
     {
         id: 2, 
         mountain_name: 'Gunung Kerinci', 
-        location: 'Jambi - Sumatera Barat', 
+        location: 'Jambi', 
         category: 'Hiking',
         basecamps: [
             {
                 id: 201, 
-                name: 'Via Kersik Tuo', 
+                name: 'Kersik Tuo', 
                 image: 'aset/kerinci.jpg', 
                 price: '25000', 
                 rating: 4.9,
@@ -46,6 +46,32 @@ const dummyData = [
                     infoJalur: `<h3>Info</h3><ul><li>Kesulitan: Sulit</li></ul>`,
                     fasilitas: `<h3>Fasilitas</h3><ul><li>Homestay</li></ul>`,
                     ulasan: `<h3>Ulasan</h3><p>Trek menantang.</p>`
+                }
+            }
+        ]
+    },
+
+    // 3. RINJANI
+    {
+        id: 3, 
+        mountain_name: 'Gunung Rinjani', 
+        location: 'Nusa Tenggara Barat', 
+        category: 'Hiking',
+        basecamps: [
+            {
+                id: 301, 
+                name: 'Sembalun', 
+                image: 'aset/rinjani.jpg', 
+                price: '20000', 
+                rating: 5.0,
+                climb_times: ['07:00'],
+                guides: ['p02'],
+                addons: [{ id: 'tenda', name: 'Tenda', price: '100000' }],
+                details: {
+                    deskripsi: `<h3>Jalur Sembalun</h3><p>Sabana luas yang memanjakan mata.</p>`,
+                    infoJalur: `<h3>Info</h3><ul><li>Kesulitan: Sulit</li></ul>`,
+                    fasilitas: `<h3>Fasilitas</h3><ul><li>Lengkap</li></ul>`,
+                    ulasan: `<h3>Ulasan</h3><p>Luar biasa.</p>`
                 }
             }
         ]
